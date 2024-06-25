@@ -18,7 +18,7 @@ This is an Othello game built with a custom game logic package and a React front
 
 ## Deployment
 
-The project is deployed on GitHub Pages. [Link to the deployed application](https://yourusername.github.io/your-repo-name)
+The project is deployed on GitHub Pages. [Link to the deployed application](https://kyle861550.github.io/othello-react/)
 
 ## Future Improvements
 
