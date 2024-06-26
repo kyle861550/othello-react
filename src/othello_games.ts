@@ -43,7 +43,7 @@ class DefaultOthelloGame implements IOthelloGame {
     }
 
     getBoard(): (Piece | null)[][] {
-        return this.board;
+        return this.board.map(row => row.slice());
     }
 
     isGameOver(): boolean {
