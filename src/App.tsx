@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import './App.css';
-import Othello from './othello';
+import {getOthello} from './othello_facade';
+import { OthelloType, Piece } from './othello_rules'
 
 const App: React.FC = () => {
-  const [othello] = useState(new Othello(8, 8));
-  const [board, setBoard] = useState<(string | null)[][]>(othello.board);
+  const [othello] = useState(getOthello());
+
+  const [board, setBoard] = useState<(Piece | null)[][]>(othello.getBoard());
+
   const [blackCount, setBlackCount] = useState(0);
   const [whiteCount, setWhiteCount] = useState(0);
 
@@ -13,7 +16,7 @@ const App: React.FC = () => {
       return;
     }
 
-    setBoard([...othello.board]);
+    setBoard([...othello.getBoard()]);
     const counts = othello.getPieceCounts();
     setBlackCount(counts.black);
     setWhiteCount(counts.white);
@@ -25,7 +28,7 @@ const App: React.FC = () => {
 
   const handleReset = () => {
     othello.resetGame();
-    setBoard([...othello.board]);
+    setBoard([...othello.getBoard()]);
     setBlackCount(0);
     setWhiteCount(0);
   };
