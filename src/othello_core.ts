@@ -1,24 +1,15 @@
 import { Player, Piece } from './othello_rules';
 
-
 export function getOthelloCore(rows: number, cols: number): IOthelloCore {
     return new DefaultOthelloCore(rows, cols);
 }
 
 export interface IOthelloCore {
-
-    putPiece(
-        player: Player,
-        row: number, 
-        col: number, 
-        board: (Piece | null)[][]): boolean
-
-    isGameOver(player: Player, board: (Piece | null)[][]): boolean
-
+    putPiece(player: Player, row: number, col: number, board: (Piece | null)[][]): boolean;
+    isGameOver(player: Player, board: (Piece | null)[][]): boolean;
 }
 
 class DefaultOthelloCore implements IOthelloCore {
-
     rows: number;
     cols: number;
 
@@ -29,124 +20,63 @@ class DefaultOthelloCore implements IOthelloCore {
 
     isGameOver(player: Player, board: (Piece | null)[][]): boolean {
         for (let row = 0; row < this.rows; row++) {
-
             for (let col = 0; col < this.cols; col++) {
-
-                const opponentPiece = player === Player.BLACK_PLAYER ? Piece.WHITE : Piece.BLACK;
-
-                const flippableDiscs = this.getFlippableDiscs(opponentPiece, row, col, board);
-                
-                if (board[row][col] === null && 
-                    this.isPlaceable(row, col, board) &&
-                    flippableDiscs.length > 0) {
+                if (this.isPlaceable(row, col, board) && this.getFlippableDiscs(player, row, col, board).length > 0) {
                     return false;
                 }
             }
-
         }
         return true;
     }
 
-    isPlaceable(
-        row: number, 
-        col: number, 
-        board: (Piece | null)[][]): boolean {
-        if (board[row][col] !== null) {
-            return false;
-        }
-
-        return true;
+    isPlaceable(row: number, col: number, board: (Piece | null)[][]): boolean {
+        return board[row][col] === null;
     }
 
-    getFlippableDiscs(
-        opponent: Piece,
-        row: number, 
-        col: number, 
-        board: (Piece | null)[][]): number[][] {
-
+    getFlippableDiscs(player: Player, row: number, col: number, board: (Piece | null)[][]): number[][] {
         const directions = [
             [-1, 0], [1, 0], [0, -1], [0, 1],
             [-1, -1], [-1, 1], [1, -1], [1, 1]
-            ];
-            
-            let flippableDiscs: number[][] = [];
-        
-            for (let [dx, dy] of directions) {
+        ];
+
+        const opponentPiece = player === Player.BLACK_PLAYER ? Piece.WHITE : Piece.BLACK;
+        let flippableDiscs: number[][] = [];
+
+        for (let [dx, dy] of directions) {
             let x = row + dx, y = col + dy;
             let potentialFlips: number[][] = [];
-        
-            while (x >= 0 && x < this.rows && y >= 0 && y < this.cols && board[x][y] === opponent) {
+
+            while (x >= 0 && x < this.rows && y >= 0 && y < this.cols && board[x][y] === opponentPiece) {
                 potentialFlips.push([x, y]);
                 x += dx;
                 y += dy;
             }
-        
-            if (x >= 0 && x < this.rows && y >= 0 && y < this.cols && board[x][y] === opponent) {
+
+            if (x >= 0 && x < this.rows && y >= 0 && y < this.cols && board[x][y] === (player === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE)) {
                 flippableDiscs = flippableDiscs.concat(potentialFlips);
             }
-    
         }
-        
-        return flippableDiscs
+
+        return flippableDiscs;
     }
 
-    putPiece(
-        player: Player,
-        row: number, 
-        col: number, 
-        board: (Piece | null)[][]): boolean {
-        
-        if(!this.isPlaceable(row, col, board)) {
+    putPiece(player: Player, row: number, col: number, board: (Piece | null)[][]): boolean {
+        if (!this.isPlaceable(row, col, board)) {
             return false;
         }
-        const opponentPiece = player === Player.BLACK_PLAYER ? Piece.WHITE : Piece.BLACK;
 
-        const flippableDiscs = this.getFlippableDiscs(opponentPiece, row, col, board);
-        
-        board[row][col] = opponentPiece;
+        const flippableDiscs = this.getFlippableDiscs(player, row, col, board);
+
+        if (flippableDiscs.length === 0) {
+            return false;
+        }
+
+        board[row][col] = player === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE;
 
         for (let [x, y] of flippableDiscs) {
-          board[x][y] = opponentPiece;
+            board[x][y] = player === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE;
         }
 
         return true;
     }
-
-    // isValidMove(
-    //     player: Player,
-    //     row: number, 
-    //     col: number, 
-    //     board: (string | null)[][]): boolean {
-
-    //     if (board[row][col] !== null) {
-    //         return false;
-    //     }
-
-    //     const directions = [
-    //         [-1, 0], [1, 0], [0, -1], [0, 1],
-    //         [-1, -1], [-1, 1], [1, -1], [1, 1]
-    //       ];
-    //       const opponent = player === Player.BLACK ? Player.WHITE : Player.BLACK;
-          
-    //       let flippableDiscs: number[][] = [];
-      
-    //       for (let [dx, dy] of directions) {
-    //         let x = row + dx, y = col + dy;
-    //         let potentialFlips: number[][] = [];
-      
-    //         while (x >= 0 && x < this.rows && y >= 0 && y < this.cols && board[x][y] === opponent) {
-    //             potentialFlips.push([x, y]);
-    //             x += dx;
-    //             y += dy;
-    //         }
-      
-    //         if (x >= 0 && x < this.rows && y >= 0 && y < this.cols && board[x][y] === player) {
-    //           flippableDiscs = flippableDiscs.concat(potentialFlips);
-    //         }
-  
-    //     }
-      
-    //     return flippableDiscs.length > 0;
-    // }
-    
 }
