@@ -41,7 +41,7 @@ const App: React.FC = () => {
             {row.map((cell, colIndex) => (
               <div
                 key={colIndex}
-                className={`cell ${cell}`}
+                className={`cell ${cell === Piece.BLACK ? 'black' : cell === Piece.WHITE ? 'white' : ''}`}
                 onClick={() => handleCellClick(rowIndex, colIndex)}
               >
                 {cell}
