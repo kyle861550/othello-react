@@ -9,10 +9,10 @@ export function getOthelloFacade(): IOthelloFacade {
 
 
 export interface IOthelloFacade {
-  
-  getBoard(): (Piece | null)[][];
 
-  setOthelloType(type: IOthelloType): void;
+  othelloType: IOthelloType
+
+  getBoard(): (Piece | null)[][];
 
   putPiece(row: number, col: number): boolean;
   
@@ -30,10 +30,6 @@ class DefaultOthelloFacade implements IOthelloFacade {
 
   getBoard(): (Piece | null)[][] {
     return this.othelloGame.getBoard();
-  }
-
-  setOthelloType(type: IOthelloType): void {
-    this.othelloType = type;
   }
   
   resetGame(): void {

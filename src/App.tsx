@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import './App.css';
-import {getOthelloFacade, Piece} from './othello';
+import {getOthelloFacade, IOthelloFacade, Piece} from './othello';
+
+const othello: IOthelloFacade = getOthelloFacade();
 
 const App: React.FC = () => {
-  const [othello] = useState(getOthelloFacade());
 
   const [board, setBoard] = useState<(Piece | null)[][]>(othello.getBoard());
 
   const [blackCount, setBlackCount] = useState(0);
   const [whiteCount, setWhiteCount] = useState(0);
 
-  const handleCellClick = (row: number, col: number) => {
+  const onCellClick = (row: number, col: number) => {
     if (!othello.putPiece(row, col)) {
       return;
     }
@@ -25,7 +26,7 @@ const App: React.FC = () => {
     }
   };
 
-  const handleReset = () => {
+  const onReset = () => {
     othello.resetGame();
     setBoard([...othello.getBoard()]);
     setBlackCount(0);
@@ -34,6 +35,10 @@ const App: React.FC = () => {
 
   return (
     <div>
+      <div className="board-description">
+        <p>Board Size: {`${othello.othelloType.rows} x ${othello.othelloType.cols}`}</p>
+      </div>
+
       <div className="board">
         {board.map((row, rowIndex) => (
           <div key={rowIndex} className="row">
@@ -41,7 +46,7 @@ const App: React.FC = () => {
               <div
                 key={colIndex}
                 className={`cell ${cell === Piece.BLACK ? 'black' : cell === Piece.WHITE ? 'white' : ''}`}
-                onClick={() => handleCellClick(rowIndex, colIndex)}
+                onClick={() => onCellClick(rowIndex, colIndex)}
               >
                 {cell}
               </div>
@@ -49,11 +54,13 @@ const App: React.FC = () => {
           </div>
         ))}
       </div>
+
       <div className="info">
         <p>Black: {blackCount}</p>
         <p>White: {whiteCount}</p>
       </div>
-      <button onClick={handleReset}>Reset</button>
+      
+      <button onClick={onReset}>Reset</button>
     </div>
   );
 };
