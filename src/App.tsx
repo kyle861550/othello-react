@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import './App.css';
-import {getOthello} from './othello_facade';
-import { OthelloType, Piece } from './othello_rules'
+import {getOthelloFacade, Piece} from './othello';
 
 const App: React.FC = () => {
-  const [othello] = useState(getOthello());
+  const [othello] = useState(getOthelloFacade());
 
   const [board, setBoard] = useState<(Piece | null)[][]>(othello.getBoard());
 

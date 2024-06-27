@@ -8,6 +8,16 @@ export enum Piece {
     WHITE
 }
 
+export class PieceCounts {
+    black: number; 
+    white: number
+  
+    constructor(black: number, white: number) {
+      this.black = black;
+      this.white = white;
+    }
+}
+
 export interface IOthelloType {
 
     rows: number;
@@ -20,12 +30,13 @@ export class OthelloType implements IOthelloType {
     static SmallBoard = new OthelloType(6, "Small Board");
     static Classic = new OthelloType(8, "Classic");
     static LargeBoard = new OthelloType(10, "Large Board");
+    static Custom = new OthelloType(8, 'Custom');
     
     rows: number;
     cols: number;
     descript: string;
 
-    private constructor(len: number, descript: string) {
+    constructor(len: number, descript: string) {
         this.rows = len;
         this.cols = len;
         this.descript = descript;

@@ -1,21 +1,10 @@
 
 import { IOthelloGame, getOthelloGame } from './othello_games';
-import {IOthelloType, OthelloType, Piece } from './othello_rules'
+import { IOthelloType, OthelloType, Piece } from './othello_rules'
+import { PieceCounts } from './othello_rules'
 
-
-export function getOthello(): IOthelloFacade {
+export function getOthelloFacade(): IOthelloFacade {
   return new DefaultOthelloFacade();
-}
-
-
-export class PieceCounts {
-  black: number; 
-  white: number
-
-  constructor(black: number, white: number) {
-    this.black = black;
-    this.white = white;
-  }
 }
 
 
