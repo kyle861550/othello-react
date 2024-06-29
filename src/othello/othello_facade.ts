@@ -30,10 +30,10 @@ export interface IOthelloFacade {
 
 class DefaultOthelloFacade implements IOthelloFacade {
   othelloType: IOthelloType = OthelloType.Classic;
-  othelloGame: IOthelloController = getOthelloController(this.othelloType);
+  othelloController: IOthelloController = getOthelloController(this.othelloType);
 
   getCurrentPlayer(): Player {
-    return this.othelloGame.currentPlayer;
+    return this.othelloController.currentPlayer;
   }
 
   getType(): IOthelloType {
@@ -46,23 +46,23 @@ class DefaultOthelloFacade implements IOthelloFacade {
   }
 
   getBoard(): (Piece | null)[][] {
-    return this.othelloGame.getBoard();
+    return this.othelloController.getBoard();
   }
   
   resetGame(): void {
-    this.othelloGame = getOthelloController(this.othelloType);
+    this.othelloController = getOthelloController(this.othelloType);
   }
 
   isGameOver(): boolean {
-    return this.othelloGame.isGameOver();
+    return this.othelloController.isGameOver();
   }
 
   putPiece(row: number, col: number): boolean {
-    return this.othelloGame.putPiece(row, col);
+    return this.othelloController.putPiece(row, col);
   }
 
   getPieceCounts(): PieceCounts {
-    const { black, white } = this.othelloGame.getPieceCounts();
+    const { black, white } = this.othelloController.getPieceCounts();
 
     return new PieceCounts(black, white);
   }
