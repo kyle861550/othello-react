@@ -1,7 +1,7 @@
 
-import { IOthelloGame, getOthelloGame } from './othello_games';
+import { IOthelloController, getOthelloController } from './othello_controller';
 import { IOthelloType, OthelloType, Piece } from './othello_rules'
-import { PieceCounts } from './othello_rules'
+import { PieceCounts, Player } from './othello_rules'
 
 export function getOthelloFacade(): IOthelloFacade {
   return new DefaultOthelloFacade();
@@ -10,7 +10,11 @@ export function getOthelloFacade(): IOthelloFacade {
 
 export interface IOthelloFacade {
 
-  othelloType: IOthelloType
+  getCurrentPlayer(): Player;
+
+  getType(): IOthelloType
+
+  setType(type: IOthelloType): void
 
   getBoard(): (Piece | null)[][];
 
@@ -26,14 +30,27 @@ export interface IOthelloFacade {
 
 class DefaultOthelloFacade implements IOthelloFacade {
   othelloType: IOthelloType = OthelloType.Classic;
-  othelloGame: IOthelloGame = getOthelloGame(this.othelloType);
+  othelloGame: IOthelloController = getOthelloController(this.othelloType);
+
+  getCurrentPlayer(): Player {
+    return this.othelloGame.currentPlayer;
+  }
+
+  getType(): IOthelloType {
+    return this.othelloType;
+  }
+
+  setType(type: IOthelloType): void {
+    this.othelloType = type;
+    this.resetGame();
+  }
 
   getBoard(): (Piece | null)[][] {
     return this.othelloGame.getBoard();
   }
   
   resetGame(): void {
-    this.othelloGame = getOthelloGame(this.othelloType);
+    this.othelloGame = getOthelloController(this.othelloType);
   }
 
   isGameOver(): boolean {

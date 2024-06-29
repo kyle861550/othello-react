@@ -1,12 +1,13 @@
 import { Player, Piece, IOthelloType } from './othello_rules';
 import { IOthelloCore, getOthelloCore } from './othello_core';
 
-export function getOthelloGame(type: IOthelloType): IOthelloGame {
-    return new DefaultOthelloGame(type);
+export function getOthelloController(type: IOthelloType): IOthelloController {
+    return new DefaultOthelloController(type);
 }
 
 
-export interface IOthelloGame {
+export interface IOthelloController {
+    readonly currentPlayer: Player;
 
     getBoard(): (Piece | null)[][];
 
@@ -18,7 +19,7 @@ export interface IOthelloGame {
 
 }
 
-class DefaultOthelloGame implements IOthelloGame {
+class DefaultOthelloController implements IOthelloController {
     
     board: (Piece | null)[][];
     currentPlayer: Player;
@@ -64,8 +65,10 @@ class DefaultOthelloGame implements IOthelloGame {
                 switch(cell) {
                     case Piece.BLACK:
                         black++;
+                        break;
                     case Piece.WHITE:
                         white++;
+                        break;
                 }
             }
         }

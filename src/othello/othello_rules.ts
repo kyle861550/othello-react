@@ -26,11 +26,23 @@ export interface IOthelloType {
 
 }
 
+export interface IOthelloRule {
+    readonly minSize: number;
+
+    isIllegalSize(size: number): boolean;
+
+    values(): IOthelloType[];
+
+    getDefaultCustomType(): IOthelloType
+
+    createCustomOthelloType(size: number): IOthelloType
+}
+
 export class OthelloType implements IOthelloType {
     static SmallBoard = new OthelloType(6, "Small Board");
     static Classic = new OthelloType(8, "Classic");
-    static LargeBoard = new OthelloType(10, "Large Board");
-    static Custom = new OthelloType(8, 'Custom');
+    static LargeBoard = new OthelloType(12, "Large Board");
+    static Custom = new OthelloType(4, 'Custom');
     
     rows: number;
     cols: number;
@@ -42,8 +54,30 @@ export class OthelloType implements IOthelloType {
         this.descript = descript;
     }
 
-    static values() {
-        return [OthelloType.Classic, OthelloType.LargeBoard, OthelloType.SmallBoard];
+}
+
+export class DefaultOthelloRule implements IOthelloRule {
+
+    minSize: number = 2;
+    
+    isIllegalSize(size: number): boolean {
+        return isNaN(size) || size % 2 !== 0 || size <= this.minSize;
+    }
+
+    values(): IOthelloType[] {
+        return [
+            OthelloType.Classic, 
+            OthelloType.LargeBoard, 
+            OthelloType.SmallBoard,
+            OthelloType.Custom,];
+    }
+
+    getDefaultCustomType(): IOthelloType {
+        return OthelloType.Custom
+    }
+
+    createCustomOthelloType(size: number): IOthelloType {
+        return new OthelloType(size, OthelloType.Custom.descript)
     }
 
 }
