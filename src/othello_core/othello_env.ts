@@ -1,5 +1,5 @@
 import { Player, Piece, IOthelloType } from './othello_rules';
-import { IOthelloCore, getOthelloCore } from './othello_core';
+import { BoardResult, IOthelloCore, getOthelloCore } from './othello_core';
 
 
 export interface IOthelloEnv {
@@ -77,7 +77,7 @@ export class BattleOthelloEnv implements IOthelloEnv {
     }
 
     isGameOver(): boolean {
-        return this.othelloCore.isGameOver(this.currentPlayer, this.board);
+        return this.othelloCore.isGameOver(this.currentPlayer, this.board) === BoardResult.CANNOT_PUT;
     }
 
     convertPlayer(): void {
@@ -106,13 +106,21 @@ export class BattleOthelloEnv implements IOthelloEnv {
     }
 
     putPiece(row: number, col: number): boolean {
-        let isPutSuccess = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
+        let putResult = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
 
-        if(!isPutSuccess) {
-            return false;
+        switch(putResult) {
+            case BoardResult.EXCHANGE_PLAYER:
+                console.log("====> EXCHANGE_PLAYER")
+                this.convertPlayer();
+                break;
+
+            case BoardResult.CANNOT_PUT:
+                return false;
+
+            case BoardResult.PUTABLE:
+                this.convertPlayer();
+                break;
         }
-
-        this.convertPlayer();
 
         return true;
     }
