@@ -94,7 +94,7 @@ class DefaultOthelloAction implements IOthelloAction {
     }
     
     private getWinner(counts: PieceCounts): Player | null {
-        if(counts.black == counts.white) {
+        if(counts.black === counts.white) {
             return null;
         }
 
