@@ -1,13 +1,9 @@
 import { Player, Piece, IOthelloType } from './othello_rules';
 import { IOthelloCore, getOthelloCore } from './othello_core';
 
-export function getOthelloController(type: IOthelloType): IOthelloController {
-    return new DefaultOthelloController(type);
-}
-
 
 export interface IOthelloController {
-    readonly currentPlayer: Player;
+    currentPlayer: Player;
 
     getBoard(): (Piece | null)[][];
 
@@ -19,20 +15,53 @@ export interface IOthelloController {
 
 }
 
-class DefaultOthelloController implements IOthelloController {
+export class CustomerOthelloController implements IOthelloController {
+    controller: IOthelloController
+    currentPlayer: Player;
+
+    constructor(controller: IOthelloController) {
+        this.controller = controller;
+        this.currentPlayer = controller.currentPlayer;
+    }
+
+    getBoard(): (Piece | null)[][] {
+        return this.controller.getBoard();
+    }
+
+    getPieceCounts(): { black: number; white: number; } {
+        return this.controller.getPieceCounts();
+    }
+
+    putPiece(row: number, col: number): boolean {
+        
+        this.controller.getBoard()[row][col] = this.currentPlayer === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE;;
+
+        return true;
+    }
+
+    isGameOver(): boolean {
+        return false;
+    }
+
+}
+
+export class DefaultOthelloController implements IOthelloController {
     
     board: (Piece | null)[][];
     currentPlayer: Player;
     othelloCore: IOthelloCore;
 
-    constructor(othelloType: IOthelloType) {
+    constructor(othelloType: IOthelloType, board: (Piece | null)[][] | null) {
         this.othelloCore = getOthelloCore(othelloType.rows, othelloType.cols);
 
+        this.currentPlayer = Player.BLACK_PLAYER;
+        if(board != null) {
+            this.board = board;
+            return
+        }
         this.board = Array(othelloType.rows)
             .fill(null)
             .map(() => Array(othelloType.cols).fill(null));
-
-        this.currentPlayer = Player.BLACK_PLAYER;
 
         const midRow = Math.floor(othelloType.rows / 2);
         const midCol = Math.floor(othelloType.cols / 2);
@@ -44,7 +73,7 @@ class DefaultOthelloController implements IOthelloController {
     }
 
     getBoard(): (Piece | null)[][] {
-        return this.board.map(row => row.slice());
+        return this.board;
     }
 
     isGameOver(): boolean {

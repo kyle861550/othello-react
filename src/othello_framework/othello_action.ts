@@ -1,5 +1,6 @@
 import {IOthelloCallback, OthelloError} from './othello_framework'
-import {getOthelloFacade, IOthelloRule, IOthelloType, IOthelloFacade, Player, Piece, PieceCounts} from '../othello';
+import {getOthelloFacade, IOthelloRule, IOthelloType, IOthelloFacade, Player, Piece, PieceCounts} from '../othello_core';
+import { IOthelloCustomer } from '../othello_core/othello_facade';
 
 
 export function getOthelloAction(rule: IOthelloRule, callback: IOthelloCallback): IOthelloAction {
@@ -21,6 +22,8 @@ export interface IOthelloAction {
 
     readonly information: IOthelloInformation;
     
+    readonly customerBoard: IOthelloCustomer
+
     setType(type: IOthelloType): void
 
     putPiece(row: number, col: number): void;
@@ -46,9 +49,11 @@ class DefaultOthelloAction implements IOthelloAction {
             return this.othello.getPieceCounts();
         },
         getBoard: (): (Piece | null)[][] => {
-            return this.othello.getBoard();
+            return this.othello.getBoard().map(row => row.slice());;
         },
     };
+
+    customerBoard: IOthelloCustomer = this.othello;
 
     constructor(rule: IOthelloRule, callback: IOthelloCallback) {
         this.rule = rule;
@@ -67,40 +72,34 @@ class DefaultOthelloAction implements IOthelloAction {
     }
 
     putPiece(row: number, col: number): void {
-        let isSuccess = this.othello.putPiece(row, col);
-        let board = this.othello.getBoard();
-        console.log("===> is put success " + isSuccess);
-
-        if(!isSuccess) {
-            let preCheckGameOver = this.othello.isGameOver();
+        const isSuccess = this.othello.putPiece(row, col);
+        const board = this.othello.getBoard();
+        const counts = this.othello.getPieceCounts();
     
-            console.log("===> preCheckGameOver " + preCheckGameOver);
-    
-            if(preCheckGameOver) {
-                let counts = this.othello.getPieceCounts();
-                let winner = counts.black > counts.white ? Player.BLACK_PLAYER : Player.WHITE_PLAYER;
+        if (!isSuccess) {
+            if (this.othello.isGameOver()) {
                 this.callback.onBoardChange(counts, board);
-                this.callback.onGameOver(winner);
-                return
+                this.callback.onGameOver(this.getWinner(counts));
+            } else {
+                this.callback.onError(OthelloError.ILLEGAL_PLACE);
             }
-            
-            this.callback.onError(OthelloError.ILLEGAL_PLACE);
-            return
+            return;
         }
-        
-        let counts = this.othello.getPieceCounts();
+    
         this.callback.onBoardChange(counts, board);
-
-        let finalCheckGameOver = this.othello.isGameOver();
-        console.log("===> finalCheckGameOver " + finalCheckGameOver);
-
-        if(finalCheckGameOver) {
-            let counts = this.othello.getPieceCounts();
-            let winner = counts.black > counts.white ? Player.BLACK_PLAYER : Player.WHITE_PLAYER;
-            this.callback.onGameOver(winner);
-            return
+    
+        if (this.othello.isGameOver()) {
+            this.callback.onGameOver(this.getWinner(counts));
         }
     }
+    
+    private getWinner(counts: PieceCounts): Player | null {
+        if(counts.black == counts.white) {
+            return null;
+        }
+
+        return counts.black > counts.white ? Player.BLACK_PLAYER : Player.WHITE_PLAYER;
+    }    
 
     resetGame(): void {
         this.othello.resetGame();
