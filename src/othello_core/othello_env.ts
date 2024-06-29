@@ -2,7 +2,7 @@ import { Player, Piece, IOthelloType } from './othello_rules';
 import { IOthelloCore, getOthelloCore } from './othello_core';
 
 
-export interface IOthelloController {
+export interface IOthelloEnv {
     currentPlayer: Player;
 
     getBoard(): (Piece | null)[][];
@@ -15,11 +15,11 @@ export interface IOthelloController {
 
 }
 
-export class CustomerOthelloController implements IOthelloController {
-    controller: IOthelloController
+export class CustomerOthelloEnv implements IOthelloEnv {
+    controller: IOthelloEnv
     currentPlayer: Player;
 
-    constructor(controller: IOthelloController) {
+    constructor(controller: IOthelloEnv) {
         this.controller = controller;
         this.currentPlayer = controller.currentPlayer;
     }
@@ -45,7 +45,7 @@ export class CustomerOthelloController implements IOthelloController {
 
 }
 
-export class DefaultOthelloController implements IOthelloController {
+export class BattleOthelloEnv implements IOthelloEnv {
     
     board: (Piece | null)[][];
     currentPlayer: Player;

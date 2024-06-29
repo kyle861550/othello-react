@@ -1,5 +1,5 @@
 
-import { IOthelloController, DefaultOthelloController, CustomerOthelloController } from './othello_controller';
+import { IOthelloEnv, BattleOthelloEnv, CustomerOthelloEnv } from './othello_env';
 import { IOthelloType, OthelloType, Piece } from './othello_rules'
 import { PieceCounts, Player } from './othello_rules'
 
@@ -37,7 +37,7 @@ export interface IOthelloFacade extends IOthelloCustomer {
 
 class DefaultOthelloFacade implements IOthelloFacade {
   othelloType: IOthelloType = OthelloType.Classic;
-  othelloController: IOthelloController = new DefaultOthelloController(this.othelloType, null);
+  othelloController: IOthelloEnv = new BattleOthelloEnv(this.othelloType, null);
 
   setCurrentPlayer(player: Player): void {
     this.othelloController.currentPlayer = player
@@ -47,9 +47,9 @@ class DefaultOthelloFacade implements IOthelloFacade {
     let cachePlayer = this.othelloController.currentPlayer;
 
     if(enable) {
-      this.othelloController = new CustomerOthelloController(this.othelloController);
+      this.othelloController = new CustomerOthelloEnv(this.othelloController);
     } else {
-      this.othelloController = new DefaultOthelloController(this.othelloType, this.othelloController.getBoard()); 
+      this.othelloController = new BattleOthelloEnv(this.othelloType, this.othelloController.getBoard()); 
     }
 
     this.othelloController.currentPlayer = cachePlayer;
@@ -73,7 +73,7 @@ class DefaultOthelloFacade implements IOthelloFacade {
   }
   
   resetGame(): void {
-    this.othelloController = new DefaultOthelloController(this.othelloType, null);
+    this.othelloController = new BattleOthelloEnv(this.othelloType, null);
   }
 
   isGameOver(): boolean {

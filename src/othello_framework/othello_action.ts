@@ -103,6 +103,7 @@ class DefaultOthelloAction implements IOthelloAction {
 
     resetGame(): void {
         this.othello.resetGame();
+        this.callback.onRestarted();
 
         let counts = this.othello.getPieceCounts();
         let board = this.othello.getBoard();

@@ -34,7 +34,11 @@ const App: React.FC = () => {
         updateCounts(counts);
     };
 
-    const [game] = useState<OthelloGame>(new OthelloGame(onError, onGameOver, onBoardChange));
+    const onRestarted = () => {
+        setCustomPlacement(false);
+    }
+
+    const [game] = useState<OthelloGame>(new OthelloGame(onRestarted, onError, onGameOver, onBoardChange));
     const [gameRules] = useState<IOthelloRule>(game.rules);
     const [gameAction] = useState<IOthelloAction>(game.action);
     const [board, updateBoard] = useState<(Piece | null)[][]>(gameAction.information.getBoard());
@@ -127,7 +131,7 @@ const App: React.FC = () => {
         <div className="board-description">
             <p>Board Size: {getBoardSizeDescription(gameAction)}</p>
             <label>
-                Custom Placement:
+                Simulation Placement:
                 <input
                     type="checkbox"
                     checked={customPlacement}
