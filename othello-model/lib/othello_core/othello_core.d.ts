@@ -6,6 +6,7 @@ export declare enum BoardResult {
     PUTABLE = 2
 }
 export interface IOthelloCore {
-    isGameOver(player: Player, board: (Piece | null)[][]): BoardResult;
+    isGameOver(player: Player, board: (Piece | null)[][]): boolean;
+    isPlayerMoveable(player: Player, board: (Piece | null)[][]): boolean;
     putPiece(player: Player, row: number, col: number, board: (Piece | null)[][]): BoardResult;
 }

@@ -12,7 +12,9 @@ export enum BoardResult {
 
 export interface IOthelloCore {
 
-    isGameOver(player: Player, board: (Piece | null)[][]): BoardResult;
+    isGameOver(player: Player, board: (Piece | null)[][]): boolean;
+
+    isPlayerMoveable(player: Player, board: (Piece | null)[][]): boolean;
 
     putPiece(player: Player, row: number, col: number, board: (Piece | null)[][]): BoardResult;
 
@@ -32,15 +34,19 @@ class DefaultOthelloCore implements IOthelloCore {
         this.cols = cols;
     }
 
-    isGameOver(player: Player, board: (Piece | null)[][]): BoardResult {
+    isPlayerMoveable(player: Player, board: (Piece | null)[][]): boolean {
+        throw new Error('Method not implemented.');
+    }
+
+    isGameOver(player: Player, board: (Piece | null)[][]): boolean {
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.cols; col++) {
                 if (this.isPlaceable(row, col, board) && this.getFlippableDiscs(player, row, col, board).length > 0) {
-                    return BoardResult.PUTABLE;
+                    return false;
                 }
             }
         }
-        return BoardResult.CANNOT_PUT;
+        return true;
     }
 
     isPlaceable(row: number, col: number, board: (Piece | null)[][]): boolean {
@@ -78,7 +84,7 @@ class DefaultOthelloCore implements IOthelloCore {
         const flippableDiscs = this.getFlippableDiscs(player, row, col, board);
 
         if (flippableDiscs.length === 0) {
-            return BoardResult.CANNOT_PUT;;
+            return BoardResult.CANNOT_PUT;
         }
 
         board[row][col] = player === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE;
@@ -95,30 +101,24 @@ class DefaultOthelloCore implements IOthelloCore {
 class OthelloCoreExchangeable implements IOthelloCore {
     rows: number;
     cols: number;
-    
+    directions = [
+        [0, 1], [1, 0], [0, -1], [-1, 0], [1, 0], // 水平和垂直方向
+        [-1, -1], [-1, 1], [1, -1], [1, 1] // 斜方向
+    ];
+
     constructor(rows: number, cols: number) {
         this.rows = rows;
         this.cols = cols;
     }
 
-    isGameOver(player: Player, board: (Piece | null)[][]): BoardResult {
+    isGameOver(player: Player, board: (Piece | null)[][]): boolean {
         const opponent = player === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
-
-        if (this.isPlayerMoveable(player, board)) {
-            return BoardResult.PUTABLE;
-        }
-
-        if (this.isPlayerMoveable(opponent, board)) {
-            return BoardResult.EXCHANGE_PLAYER;
-        }
-
-        return BoardResult.CANNOT_PUT;
+        return !this.isPlayerMoveable(player, board) && !this.isPlayerMoveable(opponent, board);
     }
 
     putPiece(player: Player, row: number, col: number, board: (Piece | null)[][]): BoardResult {
         if (!this.isLegalMove(row, col, board, player)) {
             return BoardResult.CANNOT_PUT;
-            // return this.isGameOver(player, board);
         }
 
         const flippableDiscs = this.getFlippableDiscs(player, row, col, board);
@@ -130,49 +130,45 @@ class OthelloCoreExchangeable implements IOthelloCore {
         }
 
         const opponent = player === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
-
-        if (!this.isPlayerMoveable(opponent, board)) {
+        if (this.isPlayerMoveable(opponent, board)) {
             return BoardResult.EXCHANGE_PLAYER;
-        } 
+        }
 
-        return this.isGameOver(player, board);
+        return BoardResult.PUTABLE;
     }
 
     isLegalMove(row: number, col: number, board: (Piece | null)[][], player: Player): boolean {
         if (!this.isPlaceable(row, col, board)) {
             return false;
         }
-
+    
         const piece = player === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE;
         const opponent = player === Player.BLACK_PLAYER ? Piece.WHITE : Piece.BLACK;
-
-        return directions.some(([dx, dy]) => {
+    
+        return this.directions.some(([dx, dy]) => {
             let x = row + dx;
             let y = col + dy;
             let hasOpponentPiece = false;
-
+    
             while (x >= 0 && x < this.rows && y >= 0 && y < this.cols && board[x][y] === opponent) {
                 hasOpponentPiece = true;
                 x += dx;
                 y += dy;
             }
-
+    
             return hasOpponentPiece && x >= 0 && x < this.rows && y >= 0 && y < this.cols && board[x][y] === piece;
         });
-    }
+    }    
 
     isPlayerMoveable(player: Player, board: (Piece | null)[][]): boolean {
-        let result = 0;
-
         for (let row = 0; row < board.length; row++) {
             for (let col = 0; col < board[row].length; col++) {
-                if (this.isLegalMove(row, col, board, player === Player.BLACK_PLAYER ? Player.BLACK_PLAYER : Player.WHITE_PLAYER)) {
-                    result++;
+                if (this.isLegalMove(row, col, board, player)) {
+                    return true;
                 }
             }
         }
-
-        return result > 0;
+        return false;
     }
 
     isPlaceable(row: number, col: number, board: (Piece | null)[][]): boolean {
@@ -183,7 +179,7 @@ class OthelloCoreExchangeable implements IOthelloCore {
         const opponentPiece = player === Player.BLACK_PLAYER ? Piece.WHITE : Piece.BLACK;
         let flippableDiscs: number[][] = [];
 
-        for (let [dx, dy] of directions) {
+        for (let [dx, dy] of this.directions) {
             let x = row + dx, y = col + dy;
             let potentialFlips: number[][] = [];
 

@@ -77,7 +77,7 @@ export class BattleOthelloEnv implements IOthelloEnv {
     }
 
     isGameOver(): boolean {
-        return this.othelloCore.isGameOver(this.currentPlayer, this.board) === BoardResult.CANNOT_PUT;
+        return this.othelloCore.isGameOver(this.currentPlayer, this.board);
     }
 
     convertPlayer(): void {
@@ -106,24 +106,21 @@ export class BattleOthelloEnv implements IOthelloEnv {
     }
 
     putPiece(row: number, col: number): boolean {
-        let putResult = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
-
-        switch(putResult) {
-            case BoardResult.EXCHANGE_PLAYER:
-                console.log("EXCHANGE_PLAYER");
-                this.convertPlayer();
-                return false;
-
-            case BoardResult.CANNOT_PUT:
-                console.log("CANNOT_PUT");
-                return false;
-
-            case BoardResult.PUTABLE:
-                // console.log("PUTABLE");
-                this.convertPlayer();
-                return true;
+        const result = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
+    
+        if (result === BoardResult.PUTABLE) {
+            this.convertPlayer();
+            return true;
         }
-
+    
+        if (result === BoardResult.EXCHANGE_PLAYER) {
+            console.log('Player cannot move, exchanging turn');
+            this.convertPlayer();
+            return false;
+        }
+    
+        console.log('Cannot put piece here');
+        return false;
     }
 
 

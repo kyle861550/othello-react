@@ -46,7 +46,7 @@ class BattleOthelloEnv {
         return this.board;
     }
     isGameOver() {
-        return this.othelloCore.isGameOver(this.currentPlayer, this.board) === othello_core_1.BoardResult.CANNOT_PUT;
+        return this.othelloCore.isGameOver(this.currentPlayer, this.board);
     }
     convertPlayer() {
         this.currentPlayer = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
@@ -68,20 +68,18 @@ class BattleOthelloEnv {
         return { black, white };
     }
     putPiece(row, col) {
-        let putResult = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
-        switch (putResult) {
-            case othello_core_1.BoardResult.EXCHANGE_PLAYER:
-                console.log("EXCHANGE_PLAYER");
-                this.convertPlayer();
-                return false;
-            case othello_core_1.BoardResult.CANNOT_PUT:
-                console.log("CANNOT_PUT");
-                return false;
-            case othello_core_1.BoardResult.PUTABLE:
-                // console.log("PUTABLE");
-                this.convertPlayer();
-                return true;
+        const result = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
+        if (result === othello_core_1.BoardResult.PUTABLE) {
+            this.convertPlayer();
+            return true;
         }
+        if (result === othello_core_1.BoardResult.EXCHANGE_PLAYER) {
+            console.log('Player cannot move, exchanging turn');
+            this.convertPlayer();
+            return false;
+        }
+        console.log('Cannot put piece here');
+        return false;
     }
 }
 exports.BattleOthelloEnv = BattleOthelloEnv;
