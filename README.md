@@ -63,6 +63,55 @@ Fellowing the step to ihelp you establish the Otello game in your package.
     * [Svelte project sample](https://kyle861550.github.io/othello-react/type/svelte)
 
 
+## Usage of othello-model Framework
+
+This section demonstrates how to use the othello-model framework with both Object-Oriented and Functional approaches.
+
+### Object-Oriented Approach
+
+* First, implement the IOthelloCallback interface and use the OthelloGame class to create a new game.
+
+    ```typescript=
+    import { Piece, Player, PieceCounts, IOthelloRule, OthelloError, OthelloGame } from 'othello-model/lib/othello_framework';
+
+    class MyOthelloGame extends OthelloGame {
+        constructor() {
+            super(
+                () => this.onRestarted(),
+                (error) => this.onError(error),
+                (winner) => this.onGameOver(winner),
+                (counts, board) => this.onBoardChange(counts, board)
+            );
+        }
+
+        onError(error: OthelloError): void {
+            console.error(`Error: ${OthelloError[error]}`);
+        }
+
+        onRestarted(): void {
+            console.log('Game restarted');
+        }
+
+        onGameOver(winner: Player | null): void {
+            if (winner == null) {
+                console.log("Game Over! Both sides draw");
+            } else {
+                const winnerStr = winner === Player.BLACK_PLAYER ? "Black" : "White";
+                console.log(`Game Over! Winner: ${winnerStr}`);
+            }
+        }
+
+        onBoardChange(counts: PieceCounts, board: (Piece | null)[][]): void {
+            console.log('Board updated', counts, board);
+        }
+    }
+
+    const game = new MyOthelloGame();
+    game.action.resetGame();
+    game.action.putPiece(3, 3);
+    ```
+
+
 ## Future Improvements
 
 - Enhance UI/UX

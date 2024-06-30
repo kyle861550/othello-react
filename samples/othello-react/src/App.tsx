@@ -11,6 +11,7 @@ import {
   OthelloError, 
   OthelloGame,
   IOthelloAction,
+  createOthelloGame,
 } from 'othello-model/lib/othello_framework';
 
 
@@ -38,7 +39,9 @@ const App: React.FC = () => {
         setCustomPlacement(false);
     }
 
-    const [game] = useState<OthelloGame>(new OthelloGame(onRestarted, onError, onGameOver, onBoardChange));
+    const game = createOthelloGame(onRestarted, onError, onGameOver, onBoardChange);
+
+    // const [game] = useState<OthelloGame>(new OthelloGame(onRestarted, onError, onGameOver, onBoardChange));
     const [gameRules] = useState<IOthelloRule>(game.rules);
     const [gameAction] = useState<IOthelloAction>(game.action);
     const [board, updateBoard] = useState<(Piece | null)[][]>(gameAction.information.getBoard());

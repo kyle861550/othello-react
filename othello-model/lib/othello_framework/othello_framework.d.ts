@@ -1,4 +1,4 @@
-import { IOthelloRule, Player, Piece, PieceCounts } from '../othello_core';
+import { IOthelloRule, Player, Piece, PieceCounts, IOthelloType } from '../othello_core';
 import { IOthelloAction } from './othello_action';
 export declare enum OthelloError {
     ILLEGAL_PLACE = 0,
@@ -29,3 +29,13 @@ export declare class OthelloGame extends DefaultOthelloTemplate {
     onGameOver(winner: Player): void;
     onBoardChange(counts: PieceCounts, board: (Piece | null)[][]): void;
 }
+export declare function createOthelloGame(onRestarted: () => void, onError: (error: OthelloError) => void, onGameOver: (winner: Player | null) => void, onBoardChange: (counts: PieceCounts, board: (Piece | null)[][]) => void): {
+    rules: IOthelloRule;
+    action: IOthelloAction;
+    getBoard: () => (Piece | null)[][];
+    getCounts: () => PieceCounts;
+    getCurrentPlayer: () => Player;
+    setType: (type: IOthelloType) => void;
+    putPiece: (row: number, col: number) => void;
+    resetGame: () => void;
+};
