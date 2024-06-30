@@ -1,32 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BattleOthelloEnv = exports.CustomerOthelloEnv = void 0;
-var othello_rules_1 = require("./othello_rules");
-var othello_core_1 = require("./othello_core");
-var CustomerOthelloEnv = /** @class */ (function () {
-    function CustomerOthelloEnv(controller) {
+const othello_rules_1 = require("./othello_rules");
+const othello_core_1 = require("./othello_core");
+class CustomerOthelloEnv {
+    constructor(controller) {
         this.controller = controller;
         this.currentPlayer = controller.currentPlayer;
     }
-    CustomerOthelloEnv.prototype.getBoard = function () {
+    getBoard() {
         return this.controller.getBoard();
-    };
-    CustomerOthelloEnv.prototype.getPieceCounts = function () {
+    }
+    getPieceCounts() {
         return this.controller.getPieceCounts();
-    };
-    CustomerOthelloEnv.prototype.putPiece = function (row, col) {
+    }
+    putPiece(row, col) {
         this.controller.getBoard()[row][col] = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Piece.BLACK : othello_rules_1.Piece.WHITE;
         ;
         return true;
-    };
-    CustomerOthelloEnv.prototype.isGameOver = function () {
+    }
+    isGameOver() {
         return false;
-    };
-    return CustomerOthelloEnv;
-}());
+    }
+}
 exports.CustomerOthelloEnv = CustomerOthelloEnv;
-var BattleOthelloEnv = /** @class */ (function () {
-    function BattleOthelloEnv(othelloType, board) {
+class BattleOthelloEnv {
+    constructor(othelloType, board) {
         this.othelloCore = (0, othello_core_1.getOthelloCore)(othelloType.rows, othelloType.cols);
         this.currentPlayer = othello_rules_1.Player.BLACK_PLAYER;
         if (board != null) {
@@ -35,29 +34,27 @@ var BattleOthelloEnv = /** @class */ (function () {
         }
         this.board = Array(othelloType.rows)
             .fill(null)
-            .map(function () { return Array(othelloType.cols).fill(null); });
-        var midRow = Math.floor(othelloType.rows / 2);
-        var midCol = Math.floor(othelloType.cols / 2);
+            .map(() => Array(othelloType.cols).fill(null));
+        const midRow = Math.floor(othelloType.rows / 2);
+        const midCol = Math.floor(othelloType.cols / 2);
         this.board[midRow - 1][midCol - 1] = othello_rules_1.Piece.WHITE;
         this.board[midRow - 1][midCol] = othello_rules_1.Piece.BLACK;
         this.board[midRow][midCol - 1] = othello_rules_1.Piece.BLACK;
         this.board[midRow][midCol] = othello_rules_1.Piece.WHITE;
     }
-    BattleOthelloEnv.prototype.getBoard = function () {
+    getBoard() {
         return this.board;
-    };
-    BattleOthelloEnv.prototype.isGameOver = function () {
+    }
+    isGameOver() {
         return this.othelloCore.isGameOver(this.currentPlayer, this.board) === othello_core_1.BoardResult.CANNOT_PUT;
-    };
-    BattleOthelloEnv.prototype.convertPlayer = function () {
+    }
+    convertPlayer() {
         this.currentPlayer = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
-    };
-    BattleOthelloEnv.prototype.getPieceCounts = function () {
-        var black = 0, white = 0;
-        for (var _i = 0, _a = this.board; _i < _a.length; _i++) {
-            var row = _a[_i];
-            for (var _b = 0, row_1 = row; _b < row_1.length; _b++) {
-                var cell = row_1[_b];
+    }
+    getPieceCounts() {
+        let black = 0, white = 0;
+        for (let row of this.board) {
+            for (let cell of row) {
                 switch (cell) {
                     case othello_rules_1.Piece.BLACK:
                         black++;
@@ -68,10 +65,10 @@ var BattleOthelloEnv = /** @class */ (function () {
                 }
             }
         }
-        return { black: black, white: white };
-    };
-    BattleOthelloEnv.prototype.putPiece = function (row, col) {
-        var putResult = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
+        return { black, white };
+    }
+    putPiece(row, col) {
+        let putResult = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
         switch (putResult) {
             case othello_core_1.BoardResult.EXCHANGE_PLAYER:
                 console.log("====> EXCHANGE_PLAYER");
@@ -84,7 +81,6 @@ var BattleOthelloEnv = /** @class */ (function () {
                 break;
         }
         return true;
-    };
-    return BattleOthelloEnv;
-}());
+    }
+}
 exports.BattleOthelloEnv = BattleOthelloEnv;

@@ -4,7 +4,8 @@
 /node_modules
 /.pnp
 .pnp.js
-./tmp-deploy
+/tmp-deploy
+/tmp-deploy/*
 
 # testing
 /coverage
