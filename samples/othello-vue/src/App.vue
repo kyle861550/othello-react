@@ -140,22 +140,30 @@ export default {
 <style scoped>
 .board {
   display: grid;
-  gap: 1px;
+  border: 1px solid black;
+  width: 400px; 
+  height: 400px;
 }
+
 .row {
   display: contents;
 }
+
 .cell {
-  width: 50px;
-  height: 50px;
   background-color: green;
-  border: 1px solid #000; 
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.cell.black {
+
+.black {
   background-color: black;
 }
-.cell.white {
+
+.white {
   background-color: white;
 }
 </style>
+
 
