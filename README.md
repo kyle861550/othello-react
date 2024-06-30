@@ -111,6 +111,40 @@ This section demonstrates how to use the othello-model framework with both Objec
     game.action.putPiece(3, 3);
     ```
 
+### Functional Approach
+
+* You can use a functional approach to create and manipulate the Othello game.
+
+    ```typescript=
+    import { createOthelloGame } from 'othello-model/lib/othello_functional';
+    import { Piece, Player, PieceCounts, IOthelloType, OthelloError } from 'othello-model/lib/othello_core';
+
+    const onRestarted = () => {
+        console.log('Game restarted');
+    };
+
+    const onError = (error: OthelloError) => {
+        console.error(`Error: ${OthelloError[error]}`);
+    };
+
+    const onGameOver = (winner: Player | null) => {
+        if (winner == null) {
+            console.log("Game Over! Both sides draw");
+        } else {
+            const winnerStr = winner === Player.BLACK_PLAYER ? "Black" : "White";
+            console.log(`Game Over! Winner: ${winnerStr}`);
+        }
+    };
+
+    const onBoardChange = (counts: PieceCounts, board: (Piece | null)[][]) => {
+        console.log('Board updated', counts, board);
+    };
+
+    const game = createOthelloGame(onRestarted, onError, onGameOver, onBoardChange);
+
+    game.resetGame();
+    game.putPiece(3, 3);
+    ```
 
 ## Future Improvements
 
