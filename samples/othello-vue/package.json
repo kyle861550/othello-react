@@ -2,7 +2,7 @@
   "name": "othello-vue",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://kyle861550.github.io/othello-react/type/vue",
+  "homepage": "https://kyle861550.github.io/othello-react/vue",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

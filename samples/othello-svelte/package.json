@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "homepage": "https://kyle861550.github.io/othello-react/type/svelte",
+  "homepage": "https://kyle861550.github.io/othello-react/svelte",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
@@ -13,8 +13,9 @@
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.0",
+    "@rollup/plugin-html": "^1.0.3",
     "@rollup/plugin-node-resolve": "^15.0.0",
-    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-terser": "^0.4.4",
     "gh-pages": "^6.1.1",
     "rollup": "^3.15.0",
     "rollup-plugin-css-only": "^4.3.0",

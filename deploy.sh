@@ -30,7 +30,7 @@ mkdir -p tmp-deploy
 # Move the build outputs to the temporary directory
 mv samples/othello-react/build tmp-deploy/react
 mv samples/othello-vue/dist tmp-deploy/vue
-mv samples/othello-svelte/public tmp-deploy/svelte
+mv samples/othello-svelte/public/build tmp-deploy/svelte
 
 # Create a main index.html for GitHub Pages redirection
 cat <<EOF > tmp-deploy/index.html
@@ -43,9 +43,9 @@ cat <<EOF > tmp-deploy/index.html
   <h1>Welcome to Othello Projects</h1>
   <p>Please follow the links to the specific projects:</p>
   <ul>
-    <li><a href="type/react">React Project</a></li>
-    <li><a href="type/vue">Vue Project</a></li>
-    <li><a href="type/svelte">Svelte Project</a></li>
+    <li><a href="./react">React Project</a></li>
+    <li><a href="./vue">Vue Project</a></li>
+    <li><a href="./svelte">Svelte Project</a></li>
   </ul>
 </body>
 </html>
