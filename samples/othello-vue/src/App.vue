@@ -1,0 +1,142 @@
+<template>
+  <div>
+    <div class="controls">
+      <select v-model="selectedType" @change="onOthelloTypeChange">
+        <option v-for="type in gameRules.values()" :key="type.descript" :value="type.descript">
+          {{ type.descript }}
+        </option>
+      </select>
+      <input
+        v-if="selectedType === gameRules.getDefaultCustomType().descript"
+        type="number"
+        :value="gameAction.information.getType().cols"
+        @input="onCustomSizeChange"
+        :min="gameRules.minSize"
+        placeholder="Board Size"
+      />
+    </div>
+    <div class="board-description">
+      <p>Board Size: {{ getBoardSizeDescription(gameAction) }}</p>
+      <label>
+        Simulation Placement:
+        <input type="checkbox" v-model="customPlacement" @change="onCustomPlacementChange" />
+      </label>
+      <select v-if="customPlacement" v-model="selectedPiece" @change="onPieceSelectionChange">
+        <option value="black">Black</option>
+        <option value="white">White</option>
+      </select>
+    </div>
+    <div class="board" :style="gridTemplateStyle">
+      <div v-for="(row, rowIndex) in board" :key="rowIndex" class="row">
+        <div
+          v-for="(cell, colIndex) in row"
+          :key="colIndex"
+          :class="getCellClassName(cell)"
+          @click="onCellClick(rowIndex, colIndex)"
+        ></div>
+      </div>
+    </div>
+    <div class="info">
+      <p>Current Player: {{ gameAction.information.getCurrentPlayer() }}</p>
+      <p>Black: {{ counts.black }}</p>
+      <p>White: {{ counts.white }}</p>
+    </div>
+    <button @click="onReset">Reset</button>
+  </div>
+</template>
+
+<script>
+import { Piece, Player } from '../../src/othello_core';
+import { OthelloError, OthelloGame } from '../../src/othello_framework';
+
+export default {
+  data() {
+    const onError = (error) => {
+      alert(`Error: ${OthelloError[error]}`);
+    };
+
+    const onGameOver = (winner) => {
+      if (winner == null) {
+        alert("Game Over! Both sides draw");
+        return;
+      }
+      let winner_str = winner === Player.BLACK_PLAYER ? "Black" : "White";
+      alert(`Game Over! Winner: ${winner_str}`);
+    };
+
+    const onBoardChange = (counts, board) => {
+      this.board = [...board];
+      this.counts = counts;
+    };
+
+    const onRestarted = () => {
+      this.customPlacement = false;
+    };
+
+    const game = new OthelloGame(onRestarted, onError, onGameOver, onBoardChange);
+    const gameRules = game.rules;
+    const gameAction = game.action;
+
+    return {
+      game,
+      gameRules,
+      gameAction,
+      board: gameAction.information.getBoard(),
+      counts: gameAction.information.getPieceCounts(),
+      selectedType: gameAction.information.getType().descript,
+      customPlacement: false,
+      selectedPiece: Piece.BLACK,
+    };
+  },
+  methods: {
+    onCellClick(row, col) {
+      this.gameAction.putPiece(row, col);
+    },
+    onReset() {
+      this.gameAction.resetGame();
+    },
+    onOthelloTypeChange(event) {
+      const selectedDescription = event.target.value;
+      const selectedType = this.gameRules.values().find(
+        (type) => type.descript === selectedDescription
+      ) || this.gameRules.getDefaultCustomType();
+
+      this.selectedType = selectedType.descript;
+      this.gameAction.setType(selectedType);
+    },
+    onCustomSizeChange(event) {
+      const size = parseInt(event.target.value, 10);
+      this.gameAction.setType(this.gameRules.createCustomOthelloType(size));
+    },
+    getBoardSizeDescription(gameAction) {
+      const type = gameAction.information.getType();
+      return `${type.rows} x ${type.cols}`;
+    },
+    getCellClassName(cell) {
+      return `cell ${cell === Piece.BLACK ? 'black' : cell === Piece.WHITE ? 'white' : ''}`;
+    },
+    onCustomPlacementChange(event) {
+      let isSelected = event.target.checked;
+      this.customPlacement = isSelected;
+      this.gameAction.customerBoard.setCustomBoard(isSelected);
+    },
+    onPieceSelectionChange(event) {
+      this.selectedPiece = event.target.value === 'black' ? Piece.BLACK : Piece.WHITE;
+      let player = event.target.value === 'black' ? Player.BLACK_PLAYER : Player.WHITE_PLAYER;
+      this.gameAction.customerBoard.setCurrentPlayer(player);
+    },
+  },
+  computed: {
+    gridTemplateStyle() {
+      return {
+        gridTemplateRows: `repeat(${this.board.length}, 1fr)`,
+        gridTemplateColumns: `repeat(${this.board[0].length}, 1fr)`,
+      };
+    },
+  },
+};
+</script>
+
+<style>
+
+</style>

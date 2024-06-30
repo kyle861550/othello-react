@@ -31,3 +31,4 @@ The project is deployed on GitHub Pages. [Link to the deployed application](http
 
 - Currently, the game does not support networked multiplayer
 
+// export NODE_OPTIONS=--openssl-legacy-provider
