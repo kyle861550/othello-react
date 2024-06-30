@@ -1,34 +1,73 @@
-# Othello Game
+# About this project
 
-This is an Othello game built with a custom game logic package and a React frontend.
+This project includes the Othello game package, which provides the Othello game core and framework to help you quickly establish and deploy the Othello game.
 
-## Features
+## Othello game features
 
-- Configurable board size (8x8, 12x12)
+- Configurable board size (6x6, 8x8, 12x12 or custom size)
 - Gameplay functionality
 - Display current counts of black and white pieces
 - Determine and display game end and winner
 - Reset game functionality
+- Simulated chess game
 
-## Installation
 
-1. Clone the repository
-2. Run `npm install` to install dependencies
-3. Run `npm start` to start the development server
+## Create the sample env of Othello development
 
-## Deployment
+Fellowing the step to ihelp you establish the Otello game in your package.
 
-The project is deployed on GitHub Pages. [Link to the deployed application](https://kyle861550.github.io/othello-react/)
+1. Clone this project.
+
+2. Build the `othello-model` project.
+
+    ```shell=
+    cd othello-model
+
+    npm install
+
+    npm run build
+    ```
+
+3. Install the `othello-model` package locally in each sample project.
+
+    * Add the local model path in your project's `package.json` file
+
+        ```json=
+        <!-- package.json -->
+
+        {
+            "dependencies": {
+                "othello-model": "file:../../othello-model"
+            }
+        }
+        ```
+    
+    * Install local package of `othello-model` in sample project.
+
+        ```shell=
+        <!-- cd <sample project path> -->
+
+        npm install
+
+        npm run build
+        ```
+
+### Sample Project URLs
+
+* There has the deploying, you can access the different sample projects at the following URLs:
+
+    * [React project sample](https://kyle861550.github.io/othello-react/type/react)
+
+    * [Vue project sample](https://kyle861550.github.io/othello-react/type/vue)
+
+    * [Svelte project sample](https://kyle861550.github.io/othello-react/type/svelte)
+
 
 ## Future Improvements
 
-- Add AI opponent
 - Enhance UI/UX
-- Support for more board sizes
 - Improve performance for larger boards
 
 ## Known Issues
 
-- Currently, the game does not support networked multiplayer
-
-// export NODE_OPTIONS=--openssl-legacy-provider
+- Corrected the mechanism for switching opponents when it is judged that the current chess game cannot be played.
