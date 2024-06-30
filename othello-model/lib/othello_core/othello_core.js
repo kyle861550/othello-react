@@ -4,7 +4,7 @@ exports.BoardResult = void 0;
 exports.getOthelloCore = getOthelloCore;
 const othello_rules_1 = require("./othello_rules");
 function getOthelloCore(rows, cols) {
-    return new DefaultOthelloCore(rows, cols);
+    return new OthelloCoreExchangeable(rows, cols);
 }
 var BoardResult;
 (function (BoardResult) {
@@ -73,25 +73,29 @@ class OthelloCoreExchangeable {
         this.cols = cols;
     }
     isGameOver(player, board) {
-        const self = player === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Piece.BLACK : othello_rules_1.Piece.WHITE;
-        const opponent = player === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Piece.WHITE : othello_rules_1.Piece.BLACK;
-        if (this.getLegalMovesCounts(board, self) > 0) {
+        const opponent = player === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
+        if (this.isPlayerMoveable(player, board)) {
             return BoardResult.PUTABLE;
         }
-        if (this.getLegalMovesCounts(board, opponent) > 0) {
+        if (this.isPlayerMoveable(opponent, board)) {
             return BoardResult.EXCHANGE_PLAYER;
         }
         return BoardResult.CANNOT_PUT;
     }
     putPiece(player, row, col, board) {
         if (!this.isLegalMove(row, col, board, player)) {
-            return this.isGameOver(player, board);
+            return BoardResult.CANNOT_PUT;
+            // return this.isGameOver(player, board);
         }
         const flippableDiscs = this.getFlippableDiscs(player, row, col, board);
         const piece = player === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Piece.BLACK : othello_rules_1.Piece.WHITE;
         board[row][col] = piece;
         for (let [x, y] of flippableDiscs) {
             board[x][y] = piece;
+        }
+        const opponent = player === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
+        if (!this.isPlayerMoveable(opponent, board)) {
+            return BoardResult.EXCHANGE_PLAYER;
         }
         return this.isGameOver(player, board);
     }
@@ -113,16 +117,16 @@ class OthelloCoreExchangeable {
             return hasOpponentPiece && x >= 0 && x < this.rows && y >= 0 && y < this.cols && board[x][y] === piece;
         });
     }
-    getLegalMovesCounts(board, player) {
+    isPlayerMoveable(player, board) {
         let result = 0;
         for (let row = 0; row < board.length; row++) {
             for (let col = 0; col < board[row].length; col++) {
-                if (this.isLegalMove(row, col, board, player === othello_rules_1.Piece.BLACK ? othello_rules_1.Player.BLACK_PLAYER : othello_rules_1.Player.WHITE_PLAYER)) {
+                if (this.isLegalMove(row, col, board, player === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.BLACK_PLAYER : othello_rules_1.Player.WHITE_PLAYER)) {
                     result++;
                 }
             }
         }
-        return result;
+        return result > 0;
     }
     isPlaceable(row, col, board) {
         return board[row][col] === null;

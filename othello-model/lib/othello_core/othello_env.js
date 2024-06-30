@@ -71,16 +71,17 @@ class BattleOthelloEnv {
         let putResult = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
         switch (putResult) {
             case othello_core_1.BoardResult.EXCHANGE_PLAYER:
-                console.log("====> EXCHANGE_PLAYER");
+                console.log("EXCHANGE_PLAYER");
                 this.convertPlayer();
-                break;
+                return false;
             case othello_core_1.BoardResult.CANNOT_PUT:
+                console.log("CANNOT_PUT");
                 return false;
             case othello_core_1.BoardResult.PUTABLE:
+                // console.log("PUTABLE");
                 this.convertPlayer();
-                break;
+                return true;
         }
-        return true;
     }
 }
 exports.BattleOthelloEnv = BattleOthelloEnv;

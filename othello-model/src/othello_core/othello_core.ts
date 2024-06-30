@@ -1,7 +1,7 @@
 import { Player, Piece } from './othello_rules';
 
 export function getOthelloCore(rows: number, cols: number): IOthelloCore {
-    return new DefaultOthelloCore(rows, cols);
+    return new OthelloCoreExchangeable(rows, cols);
 }
 
 export enum BoardResult {
@@ -89,9 +89,8 @@ class DefaultOthelloCore implements IOthelloCore {
 
         return BoardResult.PUTABLE;
     }
-    
-}
 
+}
 
 class OthelloCoreExchangeable implements IOthelloCore {
     rows: number;
@@ -103,14 +102,13 @@ class OthelloCoreExchangeable implements IOthelloCore {
     }
 
     isGameOver(player: Player, board: (Piece | null)[][]): BoardResult {
-        const self = player === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE;
-        const opponent = player === Player.BLACK_PLAYER ? Piece.WHITE : Piece.BLACK;
+        const opponent = player === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
 
-        if (this.getLegalMovesCounts(board, self) > 0) {
+        if (this.isPlayerMoveable(player, board)) {
             return BoardResult.PUTABLE;
         }
 
-        if (this.getLegalMovesCounts(board, opponent) > 0) {
+        if (this.isPlayerMoveable(opponent, board)) {
             return BoardResult.EXCHANGE_PLAYER;
         }
 
@@ -119,7 +117,8 @@ class OthelloCoreExchangeable implements IOthelloCore {
 
     putPiece(player: Player, row: number, col: number, board: (Piece | null)[][]): BoardResult {
         if (!this.isLegalMove(row, col, board, player)) {
-            return this.isGameOver(player, board);
+            return BoardResult.CANNOT_PUT;
+            // return this.isGameOver(player, board);
         }
 
         const flippableDiscs = this.getFlippableDiscs(player, row, col, board);
@@ -129,6 +128,12 @@ class OthelloCoreExchangeable implements IOthelloCore {
         for (let [x, y] of flippableDiscs) {
             board[x][y] = piece;
         }
+
+        const opponent = player === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
+
+        if (!this.isPlayerMoveable(opponent, board)) {
+            return BoardResult.EXCHANGE_PLAYER;
+        } 
 
         return this.isGameOver(player, board);
     }
@@ -156,18 +161,18 @@ class OthelloCoreExchangeable implements IOthelloCore {
         });
     }
 
-    getLegalMovesCounts(board: (Piece | null)[][], player: Piece): number {
+    isPlayerMoveable(player: Player, board: (Piece | null)[][]): boolean {
         let result = 0;
 
         for (let row = 0; row < board.length; row++) {
             for (let col = 0; col < board[row].length; col++) {
-                if (this.isLegalMove(row, col, board, player === Piece.BLACK ? Player.BLACK_PLAYER : Player.WHITE_PLAYER)) {
+                if (this.isLegalMove(row, col, board, player === Player.BLACK_PLAYER ? Player.BLACK_PLAYER : Player.WHITE_PLAYER)) {
                     result++;
                 }
             }
         }
 
-        return result;
+        return result > 0;
     }
 
     isPlaceable(row: number, col: number, board: (Piece | null)[][]): boolean {
@@ -195,5 +200,4 @@ class OthelloCoreExchangeable implements IOthelloCore {
 
         return flippableDiscs;
     }
-
 }

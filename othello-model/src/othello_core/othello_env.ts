@@ -110,19 +110,20 @@ export class BattleOthelloEnv implements IOthelloEnv {
 
         switch(putResult) {
             case BoardResult.EXCHANGE_PLAYER:
-                console.log("====> EXCHANGE_PLAYER")
+                console.log("EXCHANGE_PLAYER");
                 this.convertPlayer();
-                break;
+                return false;
 
             case BoardResult.CANNOT_PUT:
+                console.log("CANNOT_PUT");
                 return false;
 
             case BoardResult.PUTABLE:
+                // console.log("PUTABLE");
                 this.convertPlayer();
-                break;
+                return true;
         }
 
-        return true;
     }
 
 
