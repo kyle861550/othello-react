@@ -46,8 +46,8 @@
 </template>
 
 <script>
-import { Piece, Player } from '../../src/othello_core';
-import { OthelloError, OthelloGame } from '../../src/othello_framework';
+import { Piece, Player } from 'othello-model/lib/othello_core';
+import { OthelloError, OthelloGame } from 'othello-model/lib/othello_framework';
 
 export default {
   data() {
@@ -137,6 +137,25 @@ export default {
 };
 </script>
 
-<style>
-
+<style scoped>
+.board {
+  display: grid;
+  gap: 1px;
+}
+.row {
+  display: contents;
+}
+.cell {
+  width: 50px;
+  height: 50px;
+  background-color: green;
+  border: 1px solid #000; 
+}
+.cell.black {
+  background-color: black;
+}
+.cell.white {
+  background-color: white;
+}
 </style>
+
