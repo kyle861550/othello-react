@@ -32,6 +32,25 @@ mv samples/othello-react/build tmp-deploy/react
 mv samples/othello-vue/dist tmp-deploy/vue
 mv samples/othello-svelte/public tmp-deploy/svelte
 
+# Create a main index.html for GitHub Pages redirection
+cat <<EOF > tmp-deploy/index.html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Othello Projects</title>
+</head>
+<body>
+  <h1>Welcome to Othello Projects</h1>
+  <p>Please follow the links to the specific projects:</p>
+  <ul>
+    <li><a href="type/react">React Project</a></li>
+    <li><a href="type/vue">Vue Project</a></li>
+    <li><a href="type/svelte">Svelte Project</a></li>
+  </ul>
+</body>
+</html>
+EOF
+
 # Initialize a new Git repository in the temporary directory
 cd tmp-deploy
 git init
