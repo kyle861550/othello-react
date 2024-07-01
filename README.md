@@ -56,25 +56,25 @@ Fellowing the step to ihelp you establish the Otello game in your package.
 
 * There has the deploying, you can access the different sample projects at the following URLs:
 
-    * [React project sample](https://kyle861550.github.io/othello-react/type/react)
+    * [React project sample](https://kyle861550.github.io/othello-react/react)
 
-    * [Vue project sample](https://kyle861550.github.io/othello-react/type/vue)
+    * [Vue project sample](https://kyle861550.github.io/othello-react/vue)
 
-    * [Svelte project sample](https://kyle861550.github.io/othello-react/type/svelte)
+    * [Svelte project sample](https://kyle861550.github.io/othello-react/svelte)
 
 
 ## Usage of othello-model Framework
 
 This section demonstrates how to use the othello-model framework with both Object-Oriented and Functional approaches.
 
-### Object-Oriented Approach
+### The simple object-Oriented Approach
 
 * First, implement the IOthelloCallback interface and use the OthelloGame class to create a new game.
 
     ```typescript=
     import { Piece, Player, PieceCounts, IOthelloRule, OthelloError, OthelloGame } from 'othello-model/lib/othello_framework';
 
-    class MyOthelloGame extends OthelloGame {
+    class MyOthelloGame extends OthelloGameTotalEvent {
         constructor() {
             super(
                 () => this.onRestarted(),
@@ -111,7 +111,7 @@ This section demonstrates how to use the othello-model framework with both Objec
     game.action.putPiece(3, 3);
     ```
 
-### Functional Approach
+### The simple Functional Approach
 
 * You can use a functional approach to create and manipulate the Othello game.
 
@@ -150,7 +150,4 @@ This section demonstrates how to use the othello-model framework with both Objec
 
 - Enhance UI/UX
 - Improve performance for larger boards
-
-## Known Issues
-
-- Corrected the mechanism for switching opponents when it is judged that the current chess game cannot be played.
+- Design functions that can step back and forth

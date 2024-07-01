@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OthelloGame = exports.DefaultOthelloTemplate = exports.OthelloError = void 0;
+exports.OthelloGameTotalEvent = exports.DefaultOthelloActivity = exports.OthelloError = void 0;
 exports.createOthelloGame = createOthelloGame;
 const othello_core_1 = require("../othello_core");
 const othello_action_1 = require("./othello_action");
@@ -11,14 +11,14 @@ var OthelloError;
     OthelloError[OthelloError["EXCHANGE_PLAYER"] = 2] = "EXCHANGE_PLAYER";
     OthelloError[OthelloError["KEEP_PUTTING"] = 3] = "KEEP_PUTTING";
 })(OthelloError || (exports.OthelloError = OthelloError = {}));
-class DefaultOthelloTemplate {
+class DefaultOthelloActivity {
     constructor() {
         this.rules = new othello_core_1.DefaultOthelloRule();
         this.action = (0, othello_action_1.getOthelloAction)(this.rules, this);
     }
 }
-exports.DefaultOthelloTemplate = DefaultOthelloTemplate;
-class OthelloGame extends DefaultOthelloTemplate {
+exports.DefaultOthelloActivity = DefaultOthelloActivity;
+class OthelloGameTotalEvent extends DefaultOthelloActivity {
     constructor(onRestartedCallback, onErrorCallback, onGameOverCallback, onBoardChangeCallback) {
         super();
         this.onRestartedCallback = onRestartedCallback;
@@ -39,9 +39,9 @@ class OthelloGame extends DefaultOthelloTemplate {
         this.onBoardChangeCallback(counts, board);
     }
 }
-exports.OthelloGame = OthelloGame;
+exports.OthelloGameTotalEvent = OthelloGameTotalEvent;
 function createOthelloGame(onRestarted, onError, onGameOver, onBoardChange) {
-    const game = new OthelloGame(onRestarted, onError, onGameOver, onBoardChange);
+    const game = new OthelloGameTotalEvent(onRestarted, onError, onGameOver, onBoardChange);
     return {
         rules: game.rules,
         action: game.action,

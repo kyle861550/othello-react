@@ -12,7 +12,7 @@ export interface IOthelloCallback {
     onGameOver(winner: Player | null): void;
     onBoardChange(counts: PieceCounts, board: (Piece | null)[][]): void;
 }
-export declare abstract class DefaultOthelloTemplate implements IOthelloCallback {
+export declare abstract class DefaultOthelloActivity implements IOthelloCallback {
     rules: IOthelloRule;
     action: IOthelloAction;
     abstract onError(error: OthelloError): void;
@@ -20,7 +20,7 @@ export declare abstract class DefaultOthelloTemplate implements IOthelloCallback
     abstract onGameOver(winner: Player | null): void;
     abstract onBoardChange(counts: PieceCounts, board: (Piece | null)[][]): void;
 }
-export declare class OthelloGame extends DefaultOthelloTemplate {
+export declare class OthelloGameTotalEvent extends DefaultOthelloActivity {
     onRestartedCallback: () => void;
     onErrorCallback: (error: OthelloError) => void;
     onGameOverCallback: (winner: Player) => void;

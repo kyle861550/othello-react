@@ -81,7 +81,7 @@ class BattleOthelloEnv {
         const opponent = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
         const selfPutableCounts = this.othelloCore.playerMoveableCounts(this.currentPlayer, this.board);
         const opponentPutableCounts = this.othelloCore.playerMoveableCounts(opponent, this.board);
-        console.log(`self putable counts ${selfPutableCounts}, opponent putable counts ${opponentPutableCounts}`);
+        console.log(`${this.currentPlayer} putable counts ${selfPutableCounts}, opponent putable counts ${opponentPutableCounts}`);
         if (!isPutSuccess) {
             if (selfPutableCounts == 0 && opponentPutableCounts > 0) {
                 this.convertPlayer();

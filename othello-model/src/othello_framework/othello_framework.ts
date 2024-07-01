@@ -20,7 +20,7 @@ export interface IOthelloCallback {
     
 }
 
-export abstract class DefaultOthelloTemplate implements IOthelloCallback {
+export abstract class DefaultOthelloActivity implements IOthelloCallback {
 
     rules: IOthelloRule = new DefaultOthelloRule();
 
@@ -36,7 +36,7 @@ export abstract class DefaultOthelloTemplate implements IOthelloCallback {
 
 }
 
-export class OthelloGame extends DefaultOthelloTemplate {
+export class OthelloGameTotalEvent extends DefaultOthelloActivity {
 
     constructor(
         public onRestartedCallback: () => void,
@@ -69,7 +69,7 @@ export class OthelloGame extends DefaultOthelloTemplate {
     onGameOver: (winner: Player | null) => void,
     onBoardChange: (counts: PieceCounts, board: (Piece | null)[][]) => void
 ) {
-    const game = new OthelloGame(onRestarted, onError, onGameOver, onBoardChange);
+    const game = new OthelloGameTotalEvent(onRestarted, onError, onGameOver, onBoardChange);
 
     return {
         rules: game.rules,
