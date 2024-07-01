@@ -2,7 +2,9 @@ import { IOthelloRule, Player, Piece, PieceCounts, IOthelloType } from '../othel
 import { IOthelloAction } from './othello_action';
 export declare enum OthelloError {
     ILLEGAL_PLACE = 0,
-    ILLEGAL_CUSTOM = 1
+    ILLEGAL_CUSTOM = 1,
+    EXCHANGE_PLAYER = 2,
+    KEEP_PUTTING = 3
 }
 export interface IOthelloCallback {
     onError(error: OthelloError): void;

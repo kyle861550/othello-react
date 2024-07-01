@@ -1,8 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BattleOthelloEnv = exports.CustomerOthelloEnv = void 0;
+exports.BattleOthelloEnv = exports.CustomerOthelloEnv = exports.BoardResult = void 0;
 const othello_rules_1 = require("./othello_rules");
 const othello_core_1 = require("./othello_core");
+var BoardResult;
+(function (BoardResult) {
+    BoardResult[BoardResult["PUT_SUCCESS"] = 0] = "PUT_SUCCESS";
+    BoardResult[BoardResult["PUT_SUCCESS_KEEP_PUT"] = 1] = "PUT_SUCCESS_KEEP_PUT";
+    BoardResult[BoardResult["PUT_FAIL"] = 2] = "PUT_FAIL";
+    BoardResult[BoardResult["PUT_FAIL_EXCHANGE_PLAYER"] = 3] = "PUT_FAIL_EXCHANGE_PLAYER";
+})(BoardResult || (exports.BoardResult = BoardResult = {}));
 class CustomerOthelloEnv {
     constructor(controller) {
         this.controller = controller;
@@ -17,7 +24,7 @@ class CustomerOthelloEnv {
     putPiece(row, col) {
         this.controller.getBoard()[row][col] = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Piece.BLACK : othello_rules_1.Piece.WHITE;
         ;
-        return true;
+        return BoardResult.PUT_SUCCESS;
     }
     isGameOver() {
         return false;
@@ -46,7 +53,9 @@ class BattleOthelloEnv {
         return this.board;
     }
     isGameOver() {
-        return this.othelloCore.isGameOver(this.currentPlayer, this.board) === othello_core_1.BoardResult.CANNOT_PUT;
+        const opponent = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
+        return this.othelloCore.playerMoveableCounts(this.currentPlayer, this.board) <= 0 &&
+            this.othelloCore.playerMoveableCounts(opponent, this.board) <= 0;
     }
     convertPlayer() {
         this.currentPlayer = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
@@ -68,19 +77,24 @@ class BattleOthelloEnv {
         return { black, white };
     }
     putPiece(row, col) {
-        let putResult = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
-        switch (putResult) {
-            case othello_core_1.BoardResult.EXCHANGE_PLAYER:
-                console.log("====> EXCHANGE_PLAYER");
+        const isPutSuccess = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
+        const opponent = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
+        const selfPutableCounts = this.othelloCore.playerMoveableCounts(this.currentPlayer, this.board);
+        const opponentPutableCounts = this.othelloCore.playerMoveableCounts(opponent, this.board);
+        console.log(`self putable counts ${selfPutableCounts}, opponent putable counts ${opponentPutableCounts}`);
+        if (!isPutSuccess) {
+            if (selfPutableCounts == 0 && opponentPutableCounts > 0) {
                 this.convertPlayer();
-                break;
-            case othello_core_1.BoardResult.CANNOT_PUT:
-                return false;
-            case othello_core_1.BoardResult.PUTABLE:
-                this.convertPlayer();
-                break;
+                return BoardResult.PUT_FAIL_EXCHANGE_PLAYER;
+            }
+            return BoardResult.PUT_FAIL;
         }
-        return true;
+        console.log(`${this.currentPlayer} put success.\n`);
+        if (selfPutableCounts > 0 && opponentPutableCounts == 0) {
+            return BoardResult.PUT_SUCCESS_KEEP_PUT;
+        }
+        this.convertPlayer();
+        return BoardResult.PUT_SUCCESS;
     }
 }
 exports.BattleOthelloEnv = BattleOthelloEnv;

@@ -3,8 +3,9 @@ import {getOthelloAction, IOthelloAction} from './othello_action'
 
 export enum OthelloError {
     ILLEGAL_PLACE,
-
-    ILLEGAL_CUSTOM
+    ILLEGAL_CUSTOM,
+    EXCHANGE_PLAYER,
+    KEEP_PUTTING,
 }
 
 export interface IOthelloCallback {

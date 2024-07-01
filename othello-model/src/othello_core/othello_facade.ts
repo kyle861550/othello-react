@@ -1,5 +1,5 @@
 
-import { IOthelloEnv, BattleOthelloEnv, CustomerOthelloEnv } from './othello_env';
+import { IOthelloEnv, BattleOthelloEnv, CustomerOthelloEnv, BoardResult } from './othello_env';
 import { IOthelloType, OthelloType, Piece } from './othello_rules'
 import { PieceCounts, Player } from './othello_rules'
 
@@ -25,7 +25,7 @@ export interface IOthelloFacade extends IOthelloCustomer {
 
   getBoard(): (Piece | null)[][];
 
-  putPiece(row: number, col: number): boolean;
+  putPiece(row: number, col: number): BoardResult;
   
   isGameOver(): boolean;
   
@@ -69,7 +69,7 @@ class DefaultOthelloFacade implements IOthelloFacade {
   }
 
   getBoard(): (Piece | null)[][] {
-    return this.othelloController.getBoard();
+    return this.othelloController.getBoard().map(row => row.slice());
   }
   
   resetGame(): void {
@@ -80,7 +80,7 @@ class DefaultOthelloFacade implements IOthelloFacade {
     return this.othelloController.isGameOver();
   }
 
-  putPiece(row: number, col: number): boolean {
+  putPiece(row: number, col: number): BoardResult {
     return this.othelloController.putPiece(row, col);
   }
 

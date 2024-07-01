@@ -36,7 +36,7 @@ class DefaultOthelloFacade {
         this.resetGame();
     }
     getBoard() {
-        return this.othelloController.getBoard();
+        return this.othelloController.getBoard().map(row => row.slice());
     }
     resetGame() {
         this.othelloController = new othello_env_1.BattleOthelloEnv(this.othelloType, null);

@@ -142,7 +142,7 @@ const App: React.FC = () => {
                 />
             </label>
             {customPlacement && (
-                <select onChange={onPieceSelectionChange} value={selectedPiece === Piece.BLACK ? 'black' : 'white'}>
+                <select onChange={onPieceSelectionChange} value={gameAction.information.getCurrentPlayer() === Player.BLACK_PLAYER ? 'black' : 'white'}>
                     <option value="black">Black</option>
                     <option value="white">White</option>
                 </select>

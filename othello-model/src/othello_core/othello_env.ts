@@ -1,6 +1,13 @@
 import { Player, Piece, IOthelloType } from './othello_rules';
-import { BoardResult, IOthelloCore, getOthelloCore } from './othello_core';
+import { IOthelloCore, getOthelloCore } from './othello_core';
 
+
+export enum BoardResult {
+    PUT_SUCCESS,
+    PUT_SUCCESS_KEEP_PUT,
+    PUT_FAIL,
+    PUT_FAIL_EXCHANGE_PLAYER,
+}
 
 export interface IOthelloEnv {
     currentPlayer: Player;
@@ -9,7 +16,7 @@ export interface IOthelloEnv {
 
     getPieceCounts(): { black: number; white: number } ;
     
-    putPiece(row: number, col: number): boolean
+    putPiece(row: number, col: number): BoardResult
 
     isGameOver(): boolean;
 
@@ -32,11 +39,11 @@ export class CustomerOthelloEnv implements IOthelloEnv {
         return this.controller.getPieceCounts();
     }
 
-    putPiece(row: number, col: number): boolean {
+    putPiece(row: number, col: number): BoardResult {
         
         this.controller.getBoard()[row][col] = this.currentPlayer === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE;;
 
-        return true;
+        return BoardResult.PUT_SUCCESS;
     }
 
     isGameOver(): boolean {
@@ -77,7 +84,9 @@ export class BattleOthelloEnv implements IOthelloEnv {
     }
 
     isGameOver(): boolean {
-        return this.othelloCore.isGameOver(this.currentPlayer, this.board) === BoardResult.CANNOT_PUT;
+        const opponent = this.currentPlayer === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
+        return this.othelloCore.playerMoveableCounts(this.currentPlayer, this.board) <= 0 && 
+                this.othelloCore.playerMoveableCounts(opponent, this.board) <= 0;
     }
 
     convertPlayer(): void {
@@ -105,24 +114,32 @@ export class BattleOthelloEnv implements IOthelloEnv {
         return { black, white };
     }
 
-    putPiece(row: number, col: number): boolean {
-        let putResult = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
+    putPiece(row: number, col: number): BoardResult {
+        const isPutSuccess = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
 
-        switch(putResult) {
-            case BoardResult.EXCHANGE_PLAYER:
-                console.log("====> EXCHANGE_PLAYER")
+        const opponent = this.currentPlayer === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
+        
+        const selfPutableCounts = this.othelloCore.playerMoveableCounts(this.currentPlayer, this.board)
+        const opponentPutableCounts = this.othelloCore.playerMoveableCounts(opponent, this.board)
+
+        console.log(`${this.currentPlayer} putable counts ${selfPutableCounts}, opponent putable counts ${opponentPutableCounts}`);
+    
+        if(!isPutSuccess) {
+            if(selfPutableCounts == 0 && opponentPutableCounts > 0) {
                 this.convertPlayer();
-                break;
-
-            case BoardResult.CANNOT_PUT:
-                return false;
-
-            case BoardResult.PUTABLE:
-                this.convertPlayer();
-                break;
+                return BoardResult.PUT_FAIL_EXCHANGE_PLAYER;
+            }
+            return BoardResult.PUT_FAIL;
         }
 
-        return true;
+        console.log(`${this.currentPlayer} put success.\n`);
+
+        if(selfPutableCounts > 0 && opponentPutableCounts == 0) {
+            return BoardResult.PUT_SUCCESS_KEEP_PUT;
+        }
+        this.convertPlayer();
+
+        return BoardResult.PUT_SUCCESS;
     }
 
 

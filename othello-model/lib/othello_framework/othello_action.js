@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getOthelloAction = getOthelloAction;
 const othello_framework_1 = require("./othello_framework");
 const othello_core_1 = require("../othello_core");
+const othello_env_1 = require("../othello_core/othello_env");
 function getOthelloAction(rule, callback) {
     return new DefaultOthelloAction(rule, callback);
 }
@@ -20,8 +21,7 @@ class DefaultOthelloAction {
                 return this.othello.getPieceCounts();
             },
             getBoard: () => {
-                return this.othello.getBoard().map(row => row.slice());
-                ;
+                return this.othello.getBoard();
             },
         };
         this.customerBoard = this.othello;
@@ -37,18 +37,21 @@ class DefaultOthelloAction {
         this.resetGame();
     }
     putPiece(row, col) {
-        const isSuccess = this.othello.putPiece(row, col);
+        const putResult = this.othello.putPiece(row, col);
         const board = this.othello.getBoard();
         const counts = this.othello.getPieceCounts();
-        if (!isSuccess) {
+        if (putResult == othello_env_1.BoardResult.PUT_FAIL || putResult == othello_env_1.BoardResult.PUT_FAIL_EXCHANGE_PLAYER) {
             if (this.othello.isGameOver()) {
                 this.callback.onBoardChange(counts, board);
                 this.callback.onGameOver(this.getWinner(counts));
+                return;
             }
-            else {
-                this.callback.onError(othello_framework_1.OthelloError.ILLEGAL_PLACE);
-            }
+            const errorType = putResult == othello_env_1.BoardResult.PUT_FAIL_EXCHANGE_PLAYER ? othello_framework_1.OthelloError.EXCHANGE_PLAYER : othello_framework_1.OthelloError.ILLEGAL_PLACE;
+            this.callback.onError(errorType);
             return;
+        }
+        if (putResult == othello_env_1.BoardResult.PUT_SUCCESS_KEEP_PUT) {
+            this.callback.onError(othello_framework_1.OthelloError.KEEP_PUTTING);
         }
         this.callback.onBoardChange(counts, board);
         if (this.othello.isGameOver()) {
