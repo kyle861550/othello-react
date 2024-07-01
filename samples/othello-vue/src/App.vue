@@ -47,7 +47,7 @@
 
 <script>
 import { Piece, Player } from 'othello-model/lib/othello_core';
-import { OthelloError, OthelloGame } from 'othello-model/lib/othello_framework';
+import { OthelloError, OthelloGameTotalEvent } from 'othello-model/lib/othello_framework';
 
 export default {
   data() {
@@ -73,7 +73,7 @@ export default {
       this.customPlacement = false;
     };
 
-    const game = new OthelloGame(onRestarted, onError, onGameOver, onBoardChange);
+    const game = new OthelloGameTotalEvent(onRestarted, onError, onGameOver, onBoardChange);
     const gameRules = game.rules;
     const gameAction = game.action;
 

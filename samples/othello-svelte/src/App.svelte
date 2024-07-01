@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { Piece, Player } from 'othello-model/lib/othello_core';
-  import { OthelloError, OthelloGame } from 'othello-model/lib/othello_framework';
+  import { OthelloError, OthelloGameTotalEvent } from 'othello-model/lib/othello_framework';
 
   let game, gameRules, gameAction;
   let board = [];
@@ -34,7 +34,7 @@
       customPlacement = false;
     };
 
-    game = new OthelloGame(onRestarted, onError, onGameOver, onBoardChange);
+    game = new OthelloGameTotalEvent(onRestarted, onError, onGameOver, onBoardChange);
     gameRules = game.rules;
     gameAction = game.action;
     board = gameAction.information.getBoard();
