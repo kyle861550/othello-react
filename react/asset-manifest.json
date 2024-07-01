@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/othello-react/react/static/css/main.e51fab44.chunk.css",
+    "main.js": "/othello-react/react/static/js/main.90c8a7be.chunk.js",
+    "main.js.map": "/othello-react/react/static/js/main.90c8a7be.chunk.js.map",
+    "runtime~main.js": "/othello-react/react/static/js/runtime~main.6aa15af1.js",
+    "runtime~main.js.map": "/othello-react/react/static/js/runtime~main.6aa15af1.js.map",
+    "static/js/2.2357081b.chunk.js": "/othello-react/react/static/js/2.2357081b.chunk.js",
+    "static/js/2.2357081b.chunk.js.map": "/othello-react/react/static/js/2.2357081b.chunk.js.map",
+    "static/js/3.44b60ca4.chunk.js": "/othello-react/react/static/js/3.44b60ca4.chunk.js",
+    "static/js/3.44b60ca4.chunk.js.map": "/othello-react/react/static/js/3.44b60ca4.chunk.js.map",
+    "index.html": "/othello-react/react/index.html",
+    "precache-manifest.144df5506237022da97137a9730f06e3.js": "/othello-react/react/precache-manifest.144df5506237022da97137a9730f06e3.js",
+    "service-worker.js": "/othello-react/react/service-worker.js",
+    "static/css/main.e51fab44.chunk.css.map": "/othello-react/react/static/css/main.e51fab44.chunk.css.map"
+  }
+}
