@@ -142,8 +142,8 @@ This section demonstrates how to use the othello-model framework with both Objec
 
     const game = createOthelloGame(onRestarted, onError, onGameOver, onBoardChange);
 
-    game.resetGame();
-    game.putPiece(3, 3);
+    game.action.resetGame();
+    game.action.putPiece(3, 3);
     ```
 
 ## Future Improvements
