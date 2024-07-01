@@ -4,8 +4,9 @@ import { IOthelloCore, getOthelloCore } from './othello_core';
 
 export enum BoardResult {
     PUT_SUCCESS,
+    PUT_SUCCESS_KEEP_PUT,
     PUT_FAIL,
-    PUT_FAIL_EXCHANGE_PLAYER
+    PUT_FAIL_EXCHANGE_PLAYER,
 }
 
 export interface IOthelloEnv {
@@ -115,15 +116,15 @@ export class BattleOthelloEnv implements IOthelloEnv {
 
     putPiece(row: number, col: number): BoardResult {
         const isPutSuccess = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
+
+        const opponent = this.currentPlayer === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
+        
+        const selfPutableCounts = this.othelloCore.playerMoveableCounts(this.currentPlayer, this.board)
+        const opponentPutableCounts = this.othelloCore.playerMoveableCounts(opponent, this.board)
+
+        console.log(`${this.currentPlayer} putable counts ${selfPutableCounts}, opponent putable counts ${opponentPutableCounts}`);
     
         if(!isPutSuccess) {
-            const opponent = this.currentPlayer === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
-            
-            const selfPutableCounts = this.othelloCore.playerMoveableCounts(this.currentPlayer, this.board)
-            const opponentPutableCounts = this.othelloCore.playerMoveableCounts(opponent, this.board)
-
-            console.log(`self putable counts ${selfPutableCounts}, opponent putable counts ${opponentPutableCounts}`);
- 
             if(selfPutableCounts == 0 && opponentPutableCounts > 0) {
                 this.convertPlayer();
                 return BoardResult.PUT_FAIL_EXCHANGE_PLAYER;
@@ -133,6 +134,9 @@ export class BattleOthelloEnv implements IOthelloEnv {
 
         console.log(`${this.currentPlayer} put success.\n`);
 
+        if(selfPutableCounts > 0 && opponentPutableCounts == 0) {
+            return BoardResult.PUT_SUCCESS_KEEP_PUT;
+        }
         this.convertPlayer();
 
         return BoardResult.PUT_SUCCESS;

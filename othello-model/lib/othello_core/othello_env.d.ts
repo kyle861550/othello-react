@@ -2,8 +2,9 @@ import { Player, Piece, IOthelloType } from './othello_rules';
 import { IOthelloCore } from './othello_core';
 export declare enum BoardResult {
     PUT_SUCCESS = 0,
-    PUT_FAIL = 1,
-    PUT_FAIL_EXCHANGE_PLAYER = 2
+    PUT_SUCCESS_KEEP_PUT = 1,
+    PUT_FAIL = 2,
+    PUT_FAIL_EXCHANGE_PLAYER = 3
 }
 export interface IOthelloEnv {
     currentPlayer: Player;

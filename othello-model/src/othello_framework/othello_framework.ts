@@ -5,6 +5,7 @@ export enum OthelloError {
     ILLEGAL_PLACE,
     ILLEGAL_CUSTOM,
     EXCHANGE_PLAYER,
+    KEEP_PUTTING,
 }
 
 export interface IOthelloCallback {

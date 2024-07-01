@@ -21,8 +21,7 @@ class DefaultOthelloAction {
                 return this.othello.getPieceCounts();
             },
             getBoard: () => {
-                return this.othello.getBoard().map(row => row.slice());
-                ;
+                return this.othello.getBoard();
             },
         };
         this.customerBoard = this.othello;
@@ -50,6 +49,9 @@ class DefaultOthelloAction {
             const errorType = putResult == othello_env_1.BoardResult.PUT_FAIL_EXCHANGE_PLAYER ? othello_framework_1.OthelloError.EXCHANGE_PLAYER : othello_framework_1.OthelloError.ILLEGAL_PLACE;
             this.callback.onError(errorType);
             return;
+        }
+        if (putResult == othello_env_1.BoardResult.PUT_SUCCESS_KEEP_PUT) {
+            this.callback.onError(othello_framework_1.OthelloError.KEEP_PUTTING);
         }
         this.callback.onBoardChange(counts, board);
         if (this.othello.isGameOver()) {

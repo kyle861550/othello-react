@@ -69,7 +69,7 @@ class DefaultOthelloFacade implements IOthelloFacade {
   }
 
   getBoard(): (Piece | null)[][] {
-    return this.othelloController.getBoard();
+    return this.othelloController.getBoard().map(row => row.slice());
   }
   
   resetGame(): void {

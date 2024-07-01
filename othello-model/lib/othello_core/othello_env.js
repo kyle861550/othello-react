@@ -6,8 +6,9 @@ const othello_core_1 = require("./othello_core");
 var BoardResult;
 (function (BoardResult) {
     BoardResult[BoardResult["PUT_SUCCESS"] = 0] = "PUT_SUCCESS";
-    BoardResult[BoardResult["PUT_FAIL"] = 1] = "PUT_FAIL";
-    BoardResult[BoardResult["PUT_FAIL_EXCHANGE_PLAYER"] = 2] = "PUT_FAIL_EXCHANGE_PLAYER";
+    BoardResult[BoardResult["PUT_SUCCESS_KEEP_PUT"] = 1] = "PUT_SUCCESS_KEEP_PUT";
+    BoardResult[BoardResult["PUT_FAIL"] = 2] = "PUT_FAIL";
+    BoardResult[BoardResult["PUT_FAIL_EXCHANGE_PLAYER"] = 3] = "PUT_FAIL_EXCHANGE_PLAYER";
 })(BoardResult || (exports.BoardResult = BoardResult = {}));
 class CustomerOthelloEnv {
     constructor(controller) {
@@ -77,11 +78,11 @@ class BattleOthelloEnv {
     }
     putPiece(row, col) {
         const isPutSuccess = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
+        const opponent = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
+        const selfPutableCounts = this.othelloCore.playerMoveableCounts(this.currentPlayer, this.board);
+        const opponentPutableCounts = this.othelloCore.playerMoveableCounts(opponent, this.board);
+        console.log(`self putable counts ${selfPutableCounts}, opponent putable counts ${opponentPutableCounts}`);
         if (!isPutSuccess) {
-            const opponent = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
-            const selfPutableCounts = this.othelloCore.playerMoveableCounts(this.currentPlayer, this.board);
-            const opponentPutableCounts = this.othelloCore.playerMoveableCounts(opponent, this.board);
-            console.log(`self putable counts ${selfPutableCounts}, opponent putable counts ${opponentPutableCounts}`);
             if (selfPutableCounts == 0 && opponentPutableCounts > 0) {
                 this.convertPlayer();
                 return BoardResult.PUT_FAIL_EXCHANGE_PLAYER;
@@ -89,6 +90,9 @@ class BattleOthelloEnv {
             return BoardResult.PUT_FAIL;
         }
         console.log(`${this.currentPlayer} put success.\n`);
+        if (selfPutableCounts > 0 && opponentPutableCounts == 0) {
+            return BoardResult.PUT_SUCCESS_KEEP_PUT;
+        }
         this.convertPlayer();
         return BoardResult.PUT_SUCCESS;
     }

@@ -50,7 +50,7 @@ class DefaultOthelloAction implements IOthelloAction {
             return this.othello.getPieceCounts();
         },
         getBoard: (): (Piece | null)[][] => {
-            return this.othello.getBoard().map(row => row.slice());;
+            return this.othello.getBoard();
         },
     };
 
@@ -87,6 +87,10 @@ class DefaultOthelloAction implements IOthelloAction {
 
             this.callback.onError(errorType);
             return;
+        }
+
+        if(putResult == BoardResult.PUT_SUCCESS_KEEP_PUT) {
+            this.callback.onError(OthelloError.KEEP_PUTTING);
         }
     
         this.callback.onBoardChange(counts, board);
