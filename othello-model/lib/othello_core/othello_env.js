@@ -46,7 +46,9 @@ class BattleOthelloEnv {
         return this.board;
     }
     isGameOver() {
-        return this.othelloCore.isGameOver(this.currentPlayer, this.board);
+        const opponent = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
+        return this.othelloCore.playerMoveableCounts(this.currentPlayer, this.board) <= 0 &&
+            this.othelloCore.playerMoveableCounts(opponent, this.board) <= 0;
     }
     convertPlayer() {
         this.currentPlayer = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
@@ -68,18 +70,20 @@ class BattleOthelloEnv {
         return { black, white };
     }
     putPiece(row, col) {
-        const result = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
-        if (result === othello_core_1.BoardResult.PUTABLE) {
-            this.convertPlayer();
-            return true;
-        }
-        if (result === othello_core_1.BoardResult.EXCHANGE_PLAYER) {
-            console.log('Player cannot move, exchanging turn');
-            this.convertPlayer();
+        const isPutSuccess = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
+        console.log(`....`);
+        if (!isPutSuccess) {
+            const opponent = this.currentPlayer === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Player.WHITE_PLAYER : othello_rules_1.Player.BLACK_PLAYER;
+            const opponentPutableCounts = this.othelloCore.playerMoveableCounts(opponent, this.board);
+            console.log(`${opponent.toString} putable counts ${opponentPutableCounts}`);
+            if (opponentPutableCounts > 0) {
+                this.convertPlayer();
+            }
             return false;
         }
-        console.log('Cannot put piece here');
-        return false;
+        console.log(`${this.currentPlayer} put success.`);
+        this.convertPlayer();
+        return true;
     }
 }
 exports.BattleOthelloEnv = BattleOthelloEnv;

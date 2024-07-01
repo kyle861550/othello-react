@@ -77,7 +77,9 @@ export class BattleOthelloEnv implements IOthelloEnv {
     }
 
     isGameOver(): boolean {
-        return this.othelloCore.isGameOver(this.currentPlayer, this.board);
+        const opponent = this.currentPlayer === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
+        return this.othelloCore.playerMoveableCounts(this.currentPlayer, this.board) <= 0 && 
+                this.othelloCore.playerMoveableCounts(opponent, this.board) <= 0;
     }
 
     convertPlayer(): void {
@@ -106,21 +108,26 @@ export class BattleOthelloEnv implements IOthelloEnv {
     }
 
     putPiece(row: number, col: number): boolean {
-        const result = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
+        const isPutSuccess = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
     
-        if (result === BoardResult.PUTABLE) {
-            this.convertPlayer();
-            return true;
-        }
-    
-        if (result === BoardResult.EXCHANGE_PLAYER) {
-            console.log('Player cannot move, exchanging turn');
-            this.convertPlayer();
+        console.log(`....`);
+        if(!isPutSuccess) {
+            const opponent = this.currentPlayer === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
+            
+            const opponentPutableCounts = this.othelloCore.playerMoveableCounts(opponent, this.board)
+
+            console.log(`${opponent.toString} putable counts ${opponentPutableCounts}`);
+ 
+            if(opponentPutableCounts > 0) {
+                this.convertPlayer();
+            }
             return false;
         }
-    
-        console.log('Cannot put piece here');
-        return false;
+
+        console.log(`${this.currentPlayer} put success.`);
+        this.convertPlayer();
+
+        return true;
     }
 
 
