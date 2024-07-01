@@ -7,6 +7,7 @@ var OthelloError;
 (function (OthelloError) {
     OthelloError[OthelloError["ILLEGAL_PLACE"] = 0] = "ILLEGAL_PLACE";
     OthelloError[OthelloError["ILLEGAL_CUSTOM"] = 1] = "ILLEGAL_CUSTOM";
+    OthelloError[OthelloError["EXCHANGE_PLAYER"] = 2] = "EXCHANGE_PLAYER";
 })(OthelloError || (exports.OthelloError = OthelloError = {}));
 class DefaultOthelloTemplate {
     constructor() {

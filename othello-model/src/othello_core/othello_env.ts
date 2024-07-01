@@ -1,6 +1,12 @@
 import { Player, Piece, IOthelloType } from './othello_rules';
-import { BoardResult, IOthelloCore, getOthelloCore } from './othello_core';
+import { IOthelloCore, getOthelloCore } from './othello_core';
 
+
+export enum BoardResult {
+    PUT_SUCCESS,
+    PUT_FAIL,
+    PUT_FAIL_EXCHANGE_PLAYER
+}
 
 export interface IOthelloEnv {
     currentPlayer: Player;
@@ -9,7 +15,7 @@ export interface IOthelloEnv {
 
     getPieceCounts(): { black: number; white: number } ;
     
-    putPiece(row: number, col: number): boolean
+    putPiece(row: number, col: number): BoardResult
 
     isGameOver(): boolean;
 
@@ -32,11 +38,11 @@ export class CustomerOthelloEnv implements IOthelloEnv {
         return this.controller.getPieceCounts();
     }
 
-    putPiece(row: number, col: number): boolean {
+    putPiece(row: number, col: number): BoardResult {
         
         this.controller.getBoard()[row][col] = this.currentPlayer === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE;;
 
-        return true;
+        return BoardResult.PUT_SUCCESS;
     }
 
     isGameOver(): boolean {
@@ -107,27 +113,29 @@ export class BattleOthelloEnv implements IOthelloEnv {
         return { black, white };
     }
 
-    putPiece(row: number, col: number): boolean {
+    putPiece(row: number, col: number): BoardResult {
         const isPutSuccess = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
     
-        console.log(`....`);
         if(!isPutSuccess) {
             const opponent = this.currentPlayer === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
             
+            const selfPutableCounts = this.othelloCore.playerMoveableCounts(this.currentPlayer, this.board)
             const opponentPutableCounts = this.othelloCore.playerMoveableCounts(opponent, this.board)
 
-            console.log(`${opponent.toString} putable counts ${opponentPutableCounts}`);
+            console.log(`self putable counts ${selfPutableCounts}, opponent putable counts ${opponentPutableCounts}`);
  
-            if(opponentPutableCounts > 0) {
+            if(selfPutableCounts == 0 && opponentPutableCounts > 0) {
                 this.convertPlayer();
+                return BoardResult.PUT_FAIL_EXCHANGE_PLAYER;
             }
-            return false;
+            return BoardResult.PUT_FAIL;
         }
 
-        console.log(`${this.currentPlayer} put success.`);
+        console.log(`${this.currentPlayer} put success.\n`);
+
         this.convertPlayer();
 
-        return true;
+        return BoardResult.PUT_SUCCESS;
     }
 
 

@@ -1,6 +1,7 @@
 import {IOthelloCallback, OthelloError} from './othello_framework'
 import {getOthelloFacade, IOthelloRule, IOthelloType, IOthelloFacade, Player, Piece, PieceCounts} from '../othello_core';
 import { IOthelloCustomer } from '../othello_core/othello_facade';
+import { BoardResult } from '../othello_core/othello_env';
 
 
 export function getOthelloAction(rule: IOthelloRule, callback: IOthelloCallback): IOthelloAction {
@@ -72,17 +73,19 @@ class DefaultOthelloAction implements IOthelloAction {
     }
 
     putPiece(row: number, col: number): void {
-        const isSuccess = this.othello.putPiece(row, col);
+        const putResult = this.othello.putPiece(row, col);
         const board = this.othello.getBoard();
         const counts = this.othello.getPieceCounts();
     
-        if (!isSuccess) {
+        if (putResult == BoardResult.PUT_FAIL || putResult == BoardResult.PUT_FAIL_EXCHANGE_PLAYER) {
             if (this.othello.isGameOver()) {
                 this.callback.onBoardChange(counts, board);
                 this.callback.onGameOver(this.getWinner(counts));
-            } else {
-                this.callback.onError(OthelloError.ILLEGAL_PLACE);
+                return;
             }
+            const errorType = putResult == BoardResult.PUT_FAIL_EXCHANGE_PLAYER ? OthelloError.EXCHANGE_PLAYER : OthelloError.ILLEGAL_PLACE
+
+            this.callback.onError(errorType);
             return;
         }
     

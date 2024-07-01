@@ -1,3 +1,4 @@
+import { BoardResult } from './othello_env';
 import { IOthelloType, Piece } from './othello_rules';
 import { PieceCounts, Player } from './othello_rules';
 export declare function getOthelloFacade(): IOthelloFacade;
@@ -10,7 +11,7 @@ export interface IOthelloFacade extends IOthelloCustomer {
     getType(): IOthelloType;
     setType(type: IOthelloType): void;
     getBoard(): (Piece | null)[][];
-    putPiece(row: number, col: number): boolean;
+    putPiece(row: number, col: number): BoardResult;
     isGameOver(): boolean;
     resetGame(): void;
     getPieceCounts(): PieceCounts;

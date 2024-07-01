@@ -1,17 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BoardResult = void 0;
 exports.getOthelloCore = getOthelloCore;
 const othello_rules_1 = require("./othello_rules");
 function getOthelloCore(rows, cols) {
     return new DefaultOthelloCore(rows, cols);
 }
-var BoardResult;
-(function (BoardResult) {
-    BoardResult[BoardResult["EXCHANGE_PLAYER"] = 0] = "EXCHANGE_PLAYER";
-    BoardResult[BoardResult["CANNOT_PUT"] = 1] = "CANNOT_PUT";
-    BoardResult[BoardResult["PUTABLE"] = 2] = "PUTABLE";
-})(BoardResult || (exports.BoardResult = BoardResult = {}));
 const directions = [
     [-1, 0], [1, 0], [0, -1], [0, 1],
     [-1, -1], [-1, 1], [1, -1], [1, 1]
@@ -49,16 +42,6 @@ class DefaultOthelloCore {
             }
         }
         return counts;
-    }
-    isGameOver(player, board) {
-        for (let row = 0; row < this.rows; row++) {
-            for (let col = 0; col < this.cols; col++) {
-                if (this.isPlaceable(row, col, board) && this.getFlippableDiscs(player, row, col, board).length > 0) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
     isPlaceable(row, col, board) {
         return board[row][col] === null;

@@ -4,15 +4,7 @@ export function getOthelloCore(rows: number, cols: number): IOthelloCore {
     return new DefaultOthelloCore(rows, cols);
 }
 
-export enum BoardResult {
-    EXCHANGE_PLAYER,
-    CANNOT_PUT,
-    PUTABLE,
-}
-
 export interface IOthelloCore {
-
-    // isGameOver(player: Player, board: (Piece | null)[][]): boolean;
 
     playerMoveableCounts(player: Player, board: (Piece | null)[][]): number;
 
@@ -69,17 +61,6 @@ class DefaultOthelloCore implements IOthelloCore {
             }
         }
         return counts;
-    }
-
-    isGameOver(player: Player, board: (Piece | null)[][]): boolean {
-        for (let row = 0; row < this.rows; row++) {
-            for (let col = 0; col < this.cols; col++) {
-                if (this.isPlaceable(row, col, board) && this.getFlippableDiscs(player, row, col, board).length > 0) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     isPlaceable(row: number, col: number, board: (Piece | null)[][]): boolean {
