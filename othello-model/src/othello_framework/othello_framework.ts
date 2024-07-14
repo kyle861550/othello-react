@@ -8,6 +8,14 @@ export enum OthelloError {
     KEEP_PUTTING,
 }
 
+export interface IOthelloActivity {
+
+    readonly rules: IOthelloRule
+
+    readonly action: IOthelloAction
+
+}
+
 export interface IOthelloCallback {
 
     onError(error: OthelloError): void
@@ -20,7 +28,7 @@ export interface IOthelloCallback {
     
 }
 
-export abstract class DefaultOthelloActivity implements IOthelloCallback {
+export abstract class DefaultOthelloActivity implements IOthelloActivity, IOthelloCallback {
 
     rules: IOthelloRule = new DefaultOthelloRule();
 

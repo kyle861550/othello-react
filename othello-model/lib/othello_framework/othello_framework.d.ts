@@ -6,13 +6,17 @@ export declare enum OthelloError {
     EXCHANGE_PLAYER = 2,
     KEEP_PUTTING = 3
 }
+export interface IOthelloActivity {
+    readonly rules: IOthelloRule;
+    readonly action: IOthelloAction;
+}
 export interface IOthelloCallback {
     onError(error: OthelloError): void;
     onRestarted(): void;
     onGameOver(winner: Player | null): void;
     onBoardChange(counts: PieceCounts, board: (Piece | null)[][]): void;
 }
-export declare abstract class DefaultOthelloActivity implements IOthelloCallback {
+export declare abstract class DefaultOthelloActivity implements IOthelloActivity, IOthelloCallback {
     rules: IOthelloRule;
     action: IOthelloAction;
     abstract onError(error: OthelloError): void;
