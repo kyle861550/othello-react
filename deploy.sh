@@ -28,7 +28,7 @@ cd ../..
 mkdir -p tmp-deploy
 
 # Move the build outputs to the temporary directory
-mv samples/othello-react/build tmp-deploy/react
+mv samples/othello-react/dist tmp-deploy/react
 mv samples/othello-vue/dist tmp-deploy/vue
 mv samples/othello-svelte/public/build tmp-deploy/svelte
 
