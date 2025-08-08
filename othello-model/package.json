@@ -14,8 +14,8 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@babel/plugin-transform-typescript": "^7.24.7",
-    "@babel/preset-typescript": "^7.24.7",
-    "typescript": "^5.5.2"
+    "@babel/plugin-transform-typescript": "^7.28.0",
+    "@babel/preset-typescript": "^7.27.1",
+    "typescript": "^5.9.2"
   }
 }
