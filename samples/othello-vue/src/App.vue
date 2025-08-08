@@ -37,44 +37,30 @@
       </div>
     </div>
     <div class="info">
-    <p>
-      Current Player: 
-      {{ gameAction.information.getCurrentPlayer() === Player.BLACK_PLAYER ? '⚫ Black' : '⚪ White' }}
-    </p>
+      <p>Current Player: {{ currentPlayerEmoji }}</p>
       <p>Black: {{ counts.black }}</p>
       <p>White: {{ counts.white }}</p>
     </div>
     <button @click="onReset">Reset</button>
   </div>
 </template>
-
 <script>
 import { Piece, Player } from 'othello-model/lib/othello_core';
 import { OthelloError, OthelloGameTotalEvent } from 'othello-model/lib/othello_framework';
 
 export default {
   data() {
-    const onError = (error) => {
-      alert(`Error: ${OthelloError[error]}`);
-    };
-
+    const onError = (error) => { alert(`Error: ${OthelloError[error]}`); };
     const onGameOver = (winner) => {
-      if (winner == null) {
-        alert("Game Over! Both sides draw");
-        return;
-      }
-      let winner_str = winner === Player.BLACK_PLAYER ? "Black" : "White";
+      if (winner == null) { alert("Game Over! Both sides draw"); return; }
+      const winner_str = winner === Player.BLACK_PLAYER ? "Black" : "White";
       alert(`Game Over! Winner: ${winner_str}`);
     };
-
     const onBoardChange = (boardData) => {
       this.board = [...boardData.board];
       this.counts = boardData.counts;
     };
-
-    const onRestarted = () => {
-      this.customPlacement = false;
-    };
+    const onRestarted = () => { this.customPlacement = false; };
 
     const game = new OthelloGameTotalEvent(onRestarted, onError, onGameOver, onBoardChange);
     const gameRules = game.rules;
@@ -91,19 +77,30 @@ export default {
       selectedPiece: Piece.BLACK,
     };
   },
+  computed: {
+    gridTemplateStyle() {
+      const cols = this.board?.[0]?.length || 0;
+      return {
+        gridTemplateRows: `repeat(${this.board.length}, 1fr)`,
+        gridTemplateColumns: `repeat(${cols}, 1fr)`,
+      };
+    },
+    // 👇 用這個給模板顯示 emoji
+    currentPlayerEmoji() {
+      const cur = this.gameAction?.information?.getCurrentPlayer?.();
+      if (cur === Player.BLACK_PLAYER) return '⚫ Black';
+      if (cur === Player.WHITE_PLAYER) return '⚪ White';
+      return ''; // 初始/異常時不顯示
+    },
+  },
   methods: {
-    onCellClick(row, col) {
-      this.gameAction.putPiece({row, col});
-    },
-    onReset() {
-      this.gameAction.resetGame();
-    },
+    onCellClick(row, col) { this.gameAction.putPiece({ row, col }); },
+    onReset() { this.gameAction.resetGame(); },
     onOthelloTypeChange(event) {
       const selectedDescription = event.target.value;
-      const selectedType = this.gameRules.values().find(
-        (type) => type.descript === selectedDescription
-      ) || this.gameRules.getDefaultCustomType();
-
+      const selectedType =
+        this.gameRules.values().find((t) => t.descript === selectedDescription)
+        || this.gameRules.getDefaultCustomType();
       this.selectedType = selectedType.descript;
       this.gameAction.setType(selectedType);
     },
@@ -119,26 +116,19 @@ export default {
       return `cell ${cell === Piece.BLACK ? 'black' : cell === Piece.WHITE ? 'white' : ''}`;
     },
     onCustomPlacementChange(event) {
-      let isSelected = event.target.checked;
+      const isSelected = event.target.checked;
       this.customPlacement = isSelected;
       this.gameAction.customerBoard.setCustomBoard(isSelected);
     },
     onPieceSelectionChange(event) {
       this.selectedPiece = event.target.value === 'black' ? Piece.BLACK : Piece.WHITE;
-      let player = event.target.value === 'black' ? Player.BLACK_PLAYER : Player.WHITE_PLAYER;
+      const player = event.target.value === 'black' ? Player.BLACK_PLAYER : Player.WHITE_PLAYER;
       this.gameAction.customerBoard.setCurrentPlayer(player);
-    },
-  },
-  computed: {
-    gridTemplateStyle() {
-      return {
-        gridTemplateRows: `repeat(${this.board.length}, 1fr)`,
-        gridTemplateColumns: `repeat(${this.board[0].length}, 1fr)`,
-      };
     },
   },
 };
 </script>
+
 
 <style scoped>
 .board {
