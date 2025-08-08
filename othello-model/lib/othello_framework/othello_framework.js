@@ -1,24 +1,19 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OthelloGameTotalEvent = exports.DefaultOthelloActivity = exports.OthelloError = void 0;
-exports.createOthelloGame = createOthelloGame;
-const othello_core_1 = require("../othello_core");
-const othello_action_1 = require("./othello_action");
-var OthelloError;
+import { DefaultOthelloRule } from '../othello_core';
+import { getOthelloAction } from './othello_action';
+export var OthelloError;
 (function (OthelloError) {
     OthelloError[OthelloError["ILLEGAL_PLACE"] = 0] = "ILLEGAL_PLACE";
     OthelloError[OthelloError["ILLEGAL_CUSTOM"] = 1] = "ILLEGAL_CUSTOM";
     OthelloError[OthelloError["EXCHANGE_PLAYER"] = 2] = "EXCHANGE_PLAYER";
     OthelloError[OthelloError["KEEP_PUTTING"] = 3] = "KEEP_PUTTING";
-})(OthelloError || (exports.OthelloError = OthelloError = {}));
-class DefaultOthelloActivity {
+})(OthelloError || (OthelloError = {}));
+export class DefaultOthelloActivity {
     constructor() {
-        this.rules = new othello_core_1.DefaultOthelloRule();
-        this.action = (0, othello_action_1.getOthelloAction)(this.rules, this);
+        this.rules = new DefaultOthelloRule();
+        this.action = getOthelloAction(this.rules, this);
     }
 }
-exports.DefaultOthelloActivity = DefaultOthelloActivity;
-class OthelloGameTotalEvent extends DefaultOthelloActivity {
+export class OthelloGameTotalEvent extends DefaultOthelloActivity {
     constructor(onRestartedCallback, onErrorCallback, onGameOverCallback, onBoardChangeCallback) {
         super();
         this.onRestartedCallback = onRestartedCallback;
@@ -35,12 +30,11 @@ class OthelloGameTotalEvent extends DefaultOthelloActivity {
     onGameOver(winner) {
         this.onGameOverCallback(winner);
     }
-    onBoardChange(counts, board) {
-        this.onBoardChangeCallback(counts, board);
+    onBoardChange(boardData) {
+        this.onBoardChangeCallback(boardData);
     }
 }
-exports.OthelloGameTotalEvent = OthelloGameTotalEvent;
-function createOthelloGame(onRestarted, onError, onGameOver, onBoardChange) {
+export function createOthelloGame(onRestarted, onError, onGameOver, onBoardChange) {
     const game = new OthelloGameTotalEvent(onRestarted, onError, onGameOver, onBoardChange);
     return {
         rules: game.rules,
@@ -49,7 +43,7 @@ function createOthelloGame(onRestarted, onError, onGameOver, onBoardChange) {
         getCounts: () => game.action.information.getPieceCounts(),
         getCurrentPlayer: () => game.action.information.getCurrentPlayer(),
         setType: (type) => game.action.setType(type),
-        putPiece: (row, col) => game.action.putPiece(row, col),
+        putPiece: (params) => game.action.putPiece(params),
         resetGame: () => game.action.resetGame(),
     };
 }

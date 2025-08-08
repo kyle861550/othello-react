@@ -6,10 +6,9 @@ export declare enum Piece {
     BLACK = 0,
     WHITE = 1
 }
-export declare class PieceCounts {
+export interface IPieceCounts {
     black: number;
     white: number;
-    constructor(black: number, white: number);
 }
 export interface IOthelloType {
     rows: number;

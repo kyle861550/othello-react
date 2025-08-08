@@ -1,7 +1,6 @@
-
 import { IOthelloEnv, BattleOthelloEnv, CustomerOthelloEnv, BoardResult } from './othello_env';
 import { IOthelloType, OthelloType, Piece } from './othello_rules'
-import { PieceCounts, Player } from './othello_rules'
+import { IPieceCounts, Player } from './othello_rules'
 
 export function getOthelloFacade(): IOthelloFacade {
   return new DefaultOthelloFacade();
@@ -17,21 +16,33 @@ export interface IOthelloCustomer {
 
 }
 
+export interface IBoardData {
+
+  counts: IPieceCounts;
+
+  board: (Piece | null)[][];
+
+}
+
+export interface IGameData {
+
+  get type(): IOthelloType;
+
+  get currentPlayer(): Player;
+
+}
+
 export interface IOthelloFacade extends IOthelloCustomer {
-
-  getCurrentPlayer(): Player;
-
-  getType(): IOthelloType
-
-  getBoard(): (Piece | null)[][];
-
-  putPiece(row: number, col: number): BoardResult;
   
+  getStatus(): IGameData;
+
+  getBoardData(): IBoardData;
+  
+  putPiece(params: { row: number, col: number }): BoardResult;
+
   isGameOver(): boolean;
   
   resetGame(): void;
-
-  getPieceCounts(): PieceCounts;
 
 }
 
@@ -55,21 +66,9 @@ class DefaultOthelloFacade implements IOthelloFacade {
     this.othelloController.currentPlayer = cachePlayer;
   }
 
-  getCurrentPlayer(): Player {
-    return this.othelloController.currentPlayer;
-  }
-
-  getType(): IOthelloType {
-    return this.othelloType;
-  }
-
   setType(type: IOthelloType): void {
     this.othelloType = type;
     this.resetGame();
-  }
-
-  getBoard(): (Piece | null)[][] {
-    return this.othelloController.getBoard().map(row => row.slice());
   }
   
   resetGame(): void {
@@ -80,15 +79,22 @@ class DefaultOthelloFacade implements IOthelloFacade {
     return this.othelloController.isGameOver();
   }
 
-  putPiece(row: number, col: number): BoardResult {
-    return this.othelloController.putPiece(row, col);
+  putPiece(params: { row: number, col: number }): BoardResult {
+    return this.othelloController.putPiece(params);
   }
 
-  getPieceCounts(): PieceCounts {
-    const { black, white } = this.othelloController.getPieceCounts();
-
-    return new PieceCounts(black, white);
+  getStatus(): IGameData {
+    return {
+      type: this.othelloType,
+      currentPlayer: this.othelloController.currentPlayer,
+    }
   }
 
+  getBoardData(): IBoardData {
+    return {
+      counts: this.othelloController.getPieceCounts(),
+      board: this.othelloController.getBoard().map(row => row.slice())
+    }
+  }
 
 }

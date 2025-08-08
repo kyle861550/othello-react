@@ -8,14 +8,9 @@ export enum Piece {
     WHITE
 }
 
-export class PieceCounts {
+export interface IPieceCounts {
     black: number; 
     white: number
-  
-    constructor(black: number, white: number) {
-      this.black = black;
-      this.white = white;
-    }
 }
 
 export interface IOthelloType {

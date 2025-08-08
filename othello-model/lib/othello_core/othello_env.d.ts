@@ -1,4 +1,4 @@
-import { Player, Piece, IOthelloType } from './othello_rules';
+import { Player, Piece, IOthelloType, IPieceCounts } from './othello_rules';
 import { IOthelloCore } from './othello_core';
 export declare enum BoardResult {
     PUT_SUCCESS = 0,
@@ -9,11 +9,11 @@ export declare enum BoardResult {
 export interface IOthelloEnv {
     currentPlayer: Player;
     getBoard(): (Piece | null)[][];
-    getPieceCounts(): {
-        black: number;
-        white: number;
-    };
-    putPiece(row: number, col: number): BoardResult;
+    getPieceCounts(): IPieceCounts;
+    putPiece(params: {
+        row: number;
+        col: number;
+    }): BoardResult;
     isGameOver(): boolean;
 }
 export declare class CustomerOthelloEnv implements IOthelloEnv {
@@ -25,7 +25,10 @@ export declare class CustomerOthelloEnv implements IOthelloEnv {
         black: number;
         white: number;
     };
-    putPiece(row: number, col: number): BoardResult;
+    putPiece(params: {
+        row: number;
+        col: number;
+    }): BoardResult;
     isGameOver(): boolean;
 }
 export declare class BattleOthelloEnv implements IOthelloEnv {
@@ -36,9 +39,9 @@ export declare class BattleOthelloEnv implements IOthelloEnv {
     getBoard(): (Piece | null)[][];
     isGameOver(): boolean;
     convertPlayer(): void;
-    getPieceCounts(): {
-        black: number;
-        white: number;
-    };
-    putPiece(row: number, col: number): BoardResult;
+    getPieceCounts(): IPieceCounts;
+    putPiece(params: {
+        row: number;
+        col: number;
+    }): BoardResult;
 }

@@ -1,4 +1,4 @@
-import { Player, Piece, IOthelloType } from './othello_rules';
+import { Player, Piece, IOthelloType, IPieceCounts } from './othello_rules';
 import { IOthelloCore, getOthelloCore } from './othello_core';
 
 
@@ -14,9 +14,9 @@ export interface IOthelloEnv {
 
     getBoard(): (Piece | null)[][];
 
-    getPieceCounts(): { black: number; white: number } ;
+    getPieceCounts(): IPieceCounts;
     
-    putPiece(row: number, col: number): BoardResult
+    putPiece(params: { row: number, col: number }): BoardResult
 
     isGameOver(): boolean;
 
@@ -39,7 +39,8 @@ export class CustomerOthelloEnv implements IOthelloEnv {
         return this.controller.getPieceCounts();
     }
 
-    putPiece(row: number, col: number): BoardResult {
+    putPiece(params: { row: number, col: number }): BoardResult {
+        const { row, col } = params;
         
         this.controller.getBoard()[row][col] = this.currentPlayer === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE;;
 
@@ -93,7 +94,7 @@ export class BattleOthelloEnv implements IOthelloEnv {
         this.currentPlayer = this.currentPlayer === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
     }
 
-    getPieceCounts(): { black: number; white: number; } {
+    getPieceCounts(): IPieceCounts {
         let black = 0, white = 0;
 
         for (let row of this.board) {
@@ -114,7 +115,9 @@ export class BattleOthelloEnv implements IOthelloEnv {
         return { black, white };
     }
 
-    putPiece(row: number, col: number): BoardResult {
+    putPiece(params: { row: number, col: number }): BoardResult {
+        const { row, col } = params;
+
         const isPutSuccess = this.othelloCore.putPiece(this.currentPlayer, row, col, this.board);
 
         const opponent = this.currentPlayer === Player.BLACK_PLAYER ? Player.WHITE_PLAYER : Player.BLACK_PLAYER;
@@ -125,7 +128,7 @@ export class BattleOthelloEnv implements IOthelloEnv {
         console.log(`${this.currentPlayer} putable counts ${selfPutableCounts}, opponent putable counts ${opponentPutableCounts}`);
     
         if(!isPutSuccess) {
-            if(selfPutableCounts == 0 && opponentPutableCounts > 0) {
+            if(selfPutableCounts === 0 && opponentPutableCounts > 0) {
                 this.convertPlayer();
                 return BoardResult.PUT_FAIL_EXCHANGE_PLAYER;
             }
@@ -134,7 +137,7 @@ export class BattleOthelloEnv implements IOthelloEnv {
 
         console.log(`${this.currentPlayer} put success.\n`);
 
-        if(selfPutableCounts > 0 && opponentPutableCounts == 0) {
+        if(selfPutableCounts > 0 && opponentPutableCounts === 0) {
             return BoardResult.PUT_SUCCESS_KEEP_PUT;
         }
         this.convertPlayer();

@@ -1,5 +1,6 @@
-import {IOthelloRule, Player, Piece, PieceCounts, DefaultOthelloRule, IOthelloType} from '../othello_core';
-import {getOthelloAction, IOthelloAction} from './othello_action'
+import { IOthelloRule, Player, DefaultOthelloRule, IOthelloType } from '../othello_core';
+import { IBoardData } from '../othello_core/othello_facade';
+import { getOthelloAction, IOthelloAction } from './othello_action'
 
 export enum OthelloError {
     ILLEGAL_PLACE,
@@ -24,8 +25,8 @@ export interface IOthelloCallback {
 
     onGameOver(winner: Player | null): void;
 
-    onBoardChange(counts: PieceCounts, board: (Piece | null)[][]): void;
-    
+    onBoardChange(boardData: IBoardData): void;
+
 }
 
 export abstract class DefaultOthelloActivity implements IOthelloActivity, IOthelloCallback {
@@ -33,14 +34,14 @@ export abstract class DefaultOthelloActivity implements IOthelloActivity, IOthel
     rules: IOthelloRule = new DefaultOthelloRule();
 
     action: IOthelloAction = getOthelloAction(this.rules, this);
-    
+
     abstract onError(error: OthelloError): void;
-    
+
     abstract onRestarted(): void
 
     abstract onGameOver(winner: Player | null): void;
 
-    abstract onBoardChange(counts: PieceCounts, board: (Piece | null)[][]): void;
+    abstract onBoardChange(boardData: IBoardData): void;
 
 }
 
@@ -48,12 +49,12 @@ export class OthelloGameTotalEvent extends DefaultOthelloActivity {
 
     constructor(
         public onRestartedCallback: () => void,
-        public onErrorCallback: (error: OthelloError) => void, 
-        public onGameOverCallback: (winner: Player) => void, 
-        public onBoardChangeCallback: (counts: PieceCounts, board: (Piece | null)[][]) => void) {
+        public onErrorCallback: (error: OthelloError) => void,
+        public onGameOverCallback: (winner: Player) => void,
+        public onBoardChangeCallback: (boardData: IBoardData) => void) {
         super();
     }
-  
+
     onError(error: OthelloError): void {
         this.onErrorCallback(error);
     }
@@ -61,21 +62,21 @@ export class OthelloGameTotalEvent extends DefaultOthelloActivity {
     onRestarted(): void {
         this.onRestartedCallback();
     }
-  
+
     onGameOver(winner: Player): void {
         this.onGameOverCallback(winner);
     }
-  
-    onBoardChange(counts: PieceCounts, board: (Piece | null)[][]): void {
-        this.onBoardChangeCallback(counts, board);
-    }
-  }
 
-  export function createOthelloGame(
+    onBoardChange(boardData: IBoardData): void {
+        this.onBoardChangeCallback(boardData);
+    }
+}
+
+export function createOthelloGame(
     onRestarted: () => void,
     onError: (error: OthelloError) => void,
     onGameOver: (winner: Player | null) => void,
-    onBoardChange: (counts: PieceCounts, board: (Piece | null)[][]) => void
+    onBoardChange: (boardData: IBoardData) => void
 ) {
     const game = new OthelloGameTotalEvent(onRestarted, onError, onGameOver, onBoardChange);
 
@@ -86,8 +87,8 @@ export class OthelloGameTotalEvent extends DefaultOthelloActivity {
         getCounts: () => game.action.information.getPieceCounts(),
         getCurrentPlayer: () => game.action.information.getCurrentPlayer(),
         setType: (type: IOthelloType) => game.action.setType(type),
-        putPiece: (row: number, col: number) => game.action.putPiece(row, col),
+        putPiece: (params: {row: number, col: number}) => game.action.putPiece(params),
         resetGame: () => game.action.resetGame(),
     };
-    
+
 }

@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getOthelloCore = getOthelloCore;
-const othello_rules_1 = require("./othello_rules");
-function getOthelloCore(rows, cols) {
+import { Player, Piece } from './othello_rules';
+export function getOthelloCore(rows, cols) {
     return new DefaultOthelloCore(rows, cols);
 }
 const directions = [
@@ -18,8 +15,8 @@ class DefaultOthelloCore {
         if (!this.isPlaceable(row, col, board)) {
             return false;
         }
-        const piece = player === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Piece.BLACK : othello_rules_1.Piece.WHITE;
-        const opponent = player === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Piece.WHITE : othello_rules_1.Piece.BLACK;
+        const piece = player === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE;
+        const opponent = player === Player.BLACK_PLAYER ? Piece.WHITE : Piece.BLACK;
         return directions.some(([dx, dy]) => {
             let x = row + dx;
             let y = col + dy;
@@ -47,7 +44,7 @@ class DefaultOthelloCore {
         return board[row][col] === null;
     }
     getFlippableDiscs(player, row, col, board) {
-        const opponentPiece = player === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Piece.WHITE : othello_rules_1.Piece.BLACK;
+        const opponentPiece = player === Player.BLACK_PLAYER ? Piece.WHITE : Piece.BLACK;
         let flippableDiscs = [];
         for (let [dx, dy] of directions) {
             let x = row + dx, y = col + dy;
@@ -57,7 +54,7 @@ class DefaultOthelloCore {
                 x += dx;
                 y += dy;
             }
-            if (x >= 0 && x < this.rows && y >= 0 && y < this.cols && board[x][y] === (player === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Piece.BLACK : othello_rules_1.Piece.WHITE)) {
+            if (x >= 0 && x < this.rows && y >= 0 && y < this.cols && board[x][y] === (player === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE)) {
                 flippableDiscs = flippableDiscs.concat(potentialFlips);
             }
         }
@@ -71,9 +68,9 @@ class DefaultOthelloCore {
         if (flippableDiscs.length === 0) {
             return false;
         }
-        board[row][col] = player === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Piece.BLACK : othello_rules_1.Piece.WHITE;
+        board[row][col] = player === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE;
         for (let [x, y] of flippableDiscs) {
-            board[x][y] = player === othello_rules_1.Player.BLACK_PLAYER ? othello_rules_1.Piece.BLACK : othello_rules_1.Piece.WHITE;
+            board[x][y] = player === Player.BLACK_PLAYER ? Piece.BLACK : Piece.WHITE;
         }
         return true;
     }
