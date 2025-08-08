@@ -64,9 +64,9 @@ export default {
       alert(`Game Over! Winner: ${winner_str}`);
     };
 
-    const onBoardChange = (counts, board) => {
-      this.board = [...board];
-      this.counts = counts;
+    const onBoardChange = (boardData) => {
+      this.board = [...boardData.board];
+      this.counts = boardData.counts;
     };
 
     const onRestarted = () => {
@@ -90,7 +90,7 @@ export default {
   },
   methods: {
     onCellClick(row, col) {
-      this.gameAction.putPiece(row, col);
+      this.gameAction.putPiece({row, col});
     },
     onReset() {
       this.gameAction.resetGame();

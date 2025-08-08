@@ -3,16 +3,16 @@ import './App.css';
 import {
   Piece,
   Player, 
-  PieceCounts,
+  IPieceCounts,
   IOthelloRule,
 } from 'othello-model/lib/othello_core';
 
 import {  
   OthelloError, 
-  OthelloGame,
   IOthelloAction,
   createOthelloGame,
 } from 'othello-model/lib/othello_framework';
+import { IBoardData } from 'othello-model/lib/othello_core/othello_facade';
 
 
 const App: React.FC = () => {
@@ -30,7 +30,9 @@ const App: React.FC = () => {
         alert(`Game Over! Winner: ${winner_str}`);
     };
 
-    const onBoardChange = (counts: PieceCounts, board: (Piece | null)[][]) => {
+    const onBoardChange = (boardData: IBoardData) => {
+        const { counts,  board } = boardData;
+
         updateBoard([...board]);
         updateCounts(counts);
     };
@@ -45,11 +47,11 @@ const App: React.FC = () => {
     const [gameRules] = useState<IOthelloRule>(game.rules);
     const [gameAction] = useState<IOthelloAction>(game.action);
     const [board, updateBoard] = useState<(Piece | null)[][]>(gameAction.information.getBoard());
-    const [counts, updateCounts] = useState<PieceCounts>(gameAction.information.getPieceCounts);
+    const [counts, updateCounts] = useState<IPieceCounts>(gameAction.information.getPieceCounts);
     const [selectedType, setSelectedType] = useState<string>(gameAction.information.getType().descript);
 
     const [customPlacement, setCustomPlacement] = useState<boolean>(false);
-    const [selectedPiece, setSelectedPiece] = useState<Piece>(Piece.BLACK);
+    const [_selectedPiece, setSelectedPiece] = useState<Piece>(Piece.BLACK);
 
     useEffect(() => {
         gameAction.resetGame();
@@ -57,7 +59,7 @@ const App: React.FC = () => {
 
 
     const onCellClick = (row: number, col: number) => {
-        gameAction.putPiece(row, col);
+        gameAction.putPiece({ row: row, col: col});
     };
 
     const onReset = () => {
