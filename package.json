@@ -14,6 +14,8 @@
       "audit:fix:force": "npm audit fix --force -ws",
 
       "update:safe": "npm update -ws",
-      "upgrade:major": "npx npm-check-updates -ws --root -u && npm i -ws"
+      "upgrade:major": "npx npm-check-updates -ws --root -u && npm i -ws",
+
+      "install:all": "find . -name package.json -not -path '*/node_modules/*' -execdir npm install \\;"
     }
 }
