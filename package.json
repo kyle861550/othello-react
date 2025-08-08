@@ -1,0 +1,19 @@
+{
+    "private": true,
+    "workspaces": [
+        "othello-model",
+        "samples/*"
+    ],
+    "scripts": {
+      "outdated": "npm outdated -ws --long",
+      
+      "audit": "npm audit -ws",
+      "audit:force": "npm audit -ws --force",
+      
+      "audit:fix": "npm audit fix -ws",
+      "audit:fix:force": "npm audit fix --force -ws",
+
+      "update:safe": "npm update -ws",
+      "upgrade:major": "npx npm-check-updates -ws --root -u && npm i -ws"
+    }
+}
