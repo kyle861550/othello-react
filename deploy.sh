@@ -45,7 +45,6 @@ cat <<EOF > tmp-deploy/index.html
   <ul>
     <li><a href="./react">React Project</a></li>
     <li><a href="./vue">Vue Project</a></li>
-    <li><a href="./svelte">Svelte Project</a></li>
   </ul>
 </body>
 </html>
