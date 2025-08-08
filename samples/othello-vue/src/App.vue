@@ -37,7 +37,10 @@
       </div>
     </div>
     <div class="info">
-      <p>Current Player: {{ gameAction.information.getCurrentPlayer() }}</p>
+    <p>
+      Current Player: 
+      {{ gameAction.information.getCurrentPlayer() === Player.BLACK_PLAYER ? '⚫ Black' : '⚪ White' }}
+    </p>
       <p>Black: {{ counts.black }}</p>
       <p>White: {{ counts.white }}</p>
     </div>

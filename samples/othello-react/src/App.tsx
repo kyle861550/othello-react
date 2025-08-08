@@ -165,7 +165,12 @@ const App: React.FC = () => {
             ))}
         </div>
         <div className="info">
-            <p>Current Player: {gameAction.information.getCurrentPlayer()}</p>
+            Current Player:{' '}
+            {gameAction.information.getCurrentPlayer() === Player.BLACK_PLAYER ? (
+                <span role="img" aria-label="black-player" style={{ fontSize: '1.5rem' }}>⚫</span>
+            ) : (
+                <span role="img" aria-label="white-player" style={{ fontSize: '1.5rem' }}>⚪</span>
+            )}
             <p>Black: {counts.black}</p>
             <p>White: {counts.white}</p>
         </div>

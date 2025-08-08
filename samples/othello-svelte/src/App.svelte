@@ -1,12 +1,15 @@
 <script>
-  import { onMount } from 'svelte';
-  import { Piece, Player } from 'othello-model/lib/othello_core';
-  import { OthelloError, OthelloGameTotalEvent } from 'othello-model/lib/othello_framework';
+  import { onMount } from "svelte";
+  import { Piece, Player } from "othello-model/lib/othello_core";
+  import {
+    OthelloError,
+    OthelloGameTotalEvent,
+  } from "othello-model/lib/othello_framework";
 
   let game, gameRules, gameAction;
   let board = [];
   let counts = {};
-  let selectedType = '';
+  let selectedType = "";
   let customPlacement = false;
   let selectedPiece = Piece.BLACK;
   let customCols = 8;
@@ -34,7 +37,12 @@
       customPlacement = false;
     };
 
-    game = new OthelloGameTotalEvent(onRestarted, onError, onGameOver, onBoardChange);
+    game = new OthelloGameTotalEvent(
+      onRestarted,
+      onError,
+      onGameOver,
+      onBoardChange,
+    );
     gameRules = game.rules;
     gameAction = game.action;
     board = gameAction.information.getBoard();
@@ -44,7 +52,7 @@
   });
 
   const onCellClick = (row, col) => {
-    gameAction?.putPiece({row, col});
+    gameAction?.putPiece({ row, col });
   };
 
   const onReset = () => {
@@ -54,7 +62,9 @@
   const onOthelloTypeChange = (event) => {
     const selectedDescription = event.target.value;
     const newSelectedType =
-      gameRules.values().find((type) => type.descript === selectedDescription) ||
+      gameRules
+        .values()
+        .find((type) => type.descript === selectedDescription) ||
       gameRules.getDefaultCustomType();
 
     selectedType = newSelectedType.descript;
@@ -69,13 +79,13 @@
   };
 
   const getBoardSizeDescription = () => {
-    if (!gameAction) return '';
+    if (!gameAction) return "";
     const type = gameAction.information.getType();
     return `${type.rows} x ${type.cols}`;
   };
 
   const getCellClassName = (cell) => {
-    return `cell ${cell === Piece.BLACK ? 'black' : cell === Piece.WHITE ? 'white' : ''}`;
+    return `cell ${cell === Piece.BLACK ? "black" : cell === Piece.WHITE ? "white" : ""}`;
   };
 
   const onCustomPlacementChange = (event) => {
@@ -86,7 +96,8 @@
 
   // 選子顏色直接綁 enum 值，並用響應式語句同步目前玩家
   $: if (gameAction) {
-    const player = selectedPiece === Piece.BLACK ? Player.BLACK_PLAYER : Player.WHITE_PLAYER;
+    const player =
+      selectedPiece === Piece.BLACK ? Player.BLACK_PLAYER : Player.WHITE_PLAYER;
     gameAction.customerBoard.setCurrentPlayer(player);
   }
 </script>
@@ -116,7 +127,11 @@
     <p>Board Size: {getBoardSizeDescription()}</p>
     <label>
       Simulation Placement:
-      <input type="checkbox" bind:checked={customPlacement} on:change={onCustomPlacementChange} />
+      <input
+        type="checkbox"
+        bind:checked={customPlacement}
+        on:change={onCustomPlacementChange}
+      />
     </label>
 
     {#if customPlacement}
@@ -147,7 +162,16 @@
   </div>
 
   <div class="info">
-    <p>Current Player: {gameAction?.information?.getCurrentPlayer()}</p>
+    <p>
+      Current Player:
+      {#if gameAction}
+        {#if gameAction.information.getCurrentPlayer() === Player.BLACK_PLAYER}
+          ⚫ Black
+        {:else if gameAction.information.getCurrentPlayer() === Player.WHITE_PLAYER}
+          ⚪ White
+        {/if}
+      {/if}
+    </p>
     <p>Black: {counts.black}</p>
     <p>White: {counts.white}</p>
   </div>
@@ -173,7 +197,10 @@
     cursor: pointer;
     appearance: none;
   }
-  .cell.black { background-color: black; }
-  .cell.white { background-color: white; }
+  .cell.black {
+    background-color: black;
+  }
+  .cell.white {
+    background-color: white;
+  }
 </style>
-
