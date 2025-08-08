@@ -43,8 +43,9 @@ cat <<EOF > tmp-deploy/index.html
   <h1>Welcome to Othello Projects</h1>
   <p>Please follow the links to the specific projects:</p>
   <ul>
-    <li><a href="./react">React Project</a></li>
-    <li><a href="./vue">Vue Project</a></li>
+    <li><a href="./react">SDK apply on React Project</a></li>
+    <li><a href="./vue">SDK apply on Vue Project</a></li>
+    <li><a href="./svelte">SDK apply on Svelte Project</a></li>
   </ul>
 </body>
 </html>
